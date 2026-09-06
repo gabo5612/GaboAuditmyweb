@@ -74,8 +74,9 @@ Nada de lo demás corre hasta que esto esté.
 - [x] Secret `PAGESPEED_API_KEY` en GitHub → Settings → Secrets → Actions
 - [x] `.github/workflows/audit-batch.yml` inyecta `PAGESPEED_API_KEY` y `CRUX_API_KEY` en el `env:` del step (líneas 59–60)
 - [x] **Commitear y empujar.** La nota de "un único commit inicial" era vieja. La sesión del 13 de agosto añade cinco commits, todos en `main` y empujados
-- [x] **Remoto resuelto:** `origin` → `github.com/gabo5612/Portfolio-2026.git`
+- [x] **Remoto resuelto:** `origin` → `github.com/gabo5612/GaboAuditmyweb.git`
 - [ ] **Correr el motor contra 3 tiendas reales — 1 de 3.** `naturvet.com` hecha. Faltan dos, y conviene que sean de tema y tamaño distintos
+- [ ] **Renombrar el proyecto en Vercel** a `gaboauditmyweb` → `gaboauditmyweb.vercel.app`. El repo (`gabo5612/GaboAuditmyweb`) y la carpeta local ya están renombrados; Vercel sigue el repo por id, así que el despliegue no se rompe, pero la URL sigue diciendo `portfolio-2026-snowy-one` hasta que se cambie a mano en Settings → General → Project Name
 - [ ] **Comprar el dominio.** Sin dominio no hay informe con link, ni Resend, ni email que no acabe en spam ← **único bloqueante duro que queda**
 
 ---

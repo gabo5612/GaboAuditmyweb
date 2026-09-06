@@ -3,7 +3,7 @@
 **Fecha:** 13 de agosto de 2026
 **Alcance:** servir el sitio en inglés o en español según el idioma del visitante,
 sin build step, sin dependencias y sin duplicar el markup.
-**Repo:** `gabo5612/Portfolio-2026`, rama `main`.
+**Repo:** `gabo5612/GaboAuditmyweb`, rama `main`.
 
 ---
 

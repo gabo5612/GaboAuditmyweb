@@ -1,6 +1,6 @@
 # Informe de trabajo
 
-**Proyecto:** `gabo5612/Portfolio-2026` · sitio de Gabriel Arias (rendimiento Shopify) y su motor de auditoría
+**Proyecto:** `gabo5612/GaboAuditmyweb` · sitio de Gabriel Arias (rendimiento Shopify) y su motor de auditoría
 **Fecha:** 13 de agosto de 2026
 **Punto de partida:** repositorio con un solo commit y un `README.md` de una línea
 
@@ -385,7 +385,7 @@ Los tres fallos comparten forma: el build terminaba con éxito y el sitio parec�
 ## 11. Estado actual e inventario
 
 ```
-Portfolio/
+GaboAuditmyweb/
 ├── index.html                    447   el hub: las dos vías en paralelo
 ├── speed.html                    410   sprint de velocidad + calculadora
 ├── seo.html                      483   sprint de SEO + las 22 comprobaciones
@@ -415,7 +415,7 @@ Portfolio/
 
 **Peso servido en la primera carga:** 70.860 B, de los cuales 43.128 B son las dos fuentes precargadas. Cero peticiones a terceros.
 
-**Git:** seis commits en `main`, todos empujados a `gabo5612/Portfolio-2026` y atribuidos a `gabo5612 <gabo5612@gmail.com>`.
+**Git:** seis commits en `main`, todos empujados a `gabo5612/GaboAuditmyweb` y atribuidos a `gabo5612 <gabo5612@gmail.com>`.
 
 | Commit | Qué trae |
 |---|---|
@@ -426,7 +426,7 @@ Portfolio/
 | `e11989c` | Pone hash de contenido en el nombre de las fuentes |
 | `659e5a4` | Quita las claves `_comment` de `vercel.json` |
 
-**Producción:** `portfolio-2026-snowy-one.vercel.app`, sirviendo `dist/` con las fuentes con hash y caché inmutable. Verificado por bytes, no por confianza en el panel de Vercel — que es exactamente cómo se descubrió que dos despliegues no habían llegado.
+**Producción:** `portfolio-2026-snowy-one.vercel.app` — pendiente de renombrar a `gaboauditmyweb.vercel.app` en el panel de Vercel (ver `PENDIENTES.md`), sirviendo `dist/` con las fuentes con hash y caché inmutable. Verificado por bytes, no por confianza en el panel de Vercel — que es exactamente cómo se descubrió que dos despliegues no habían llegado.
 
 > El repositorio es **público**. `INFORME.md`, `REPORTE-SEO.md` y `REPORTE-I18N.md` son material interno de trabajo, y `CLAUDE.md` incluye precios sin decidir y respuestas de FAQ marcadas como marcador de posición. Nada de eso es sensible, pero conviene decidir si se queda a la vista. Las claves y los datos de prospectos sí están cubiertos por `.gitignore`.
 

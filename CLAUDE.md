@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A three-page marketing site for Gabriel Arias, a Shopify performance and technical-SEO consultant. Repo `gabo5612/Portfolio-2026`. It replaces an older React portfolio — the repositioning dropped the experience timeline, skills grid and personal projects in favour of two service offers, sold separately.
+A three-page marketing site for Gabriel Arias, a Shopify performance and technical-SEO consultant. Repo `gabo5612/GaboAuditmyweb`. It replaces an older React portfolio — the repositioning dropped the experience timeline, skills grid and personal projects in favour of two service offers, sold separately.
 
 Two separate things live here: the public marketing site, and `audit-engine/`, the internal tooling that produces the audit the site sells.
 
