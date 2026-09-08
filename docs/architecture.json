@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "GaboAuditmyweb — Marketing Site and the Audit Engine Behind It",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "run-audit", "label": "Run a speed audit", "focus": ["apis", "cli", "collect", "validate", "report"], "note": "Collectors hit PageSpeed and CrUX, the payload is validated against a schema, then rendered." },
+      { "id": "seo-track", "label": "The SEO track", "focus": ["cli", "seo", "validate", "report"], "note": "22 technical checks, no API key needed, and the report template is picked from the audit's own tipo field." },
+      { "id": "deploy", "label": "Deploy the site", "focus": ["pages", "build", "check", "vercel"], "note": "The deploy command is the check itself, so a minifier bug cannot reach production." }
+    ]
+  },
+  "components": [
+    { "id": "apis",     "type": "external", "label": "Google APIs",       "sublabel": "PageSpeed + CrUX",       "pos": [40, 100],   "size": [142, 52] },
+    { "id": "fixtures", "type": "security", "label": "Recorded Payloads", "sublabel": "network cut at fetch",   "pos": [302, 100],  "size": [142, 52] },
+    { "id": "cli",      "type": "frontend", "label": "audit-engine CLI",  "sublabel": "audit · seo · batch",    "pos": [40, 226],   "size": [142, 52] },
+    { "id": "collect",  "type": "backend",  "label": "Speed Collectors",  "sublabel": "lab + field",            "pos": [302, 226],  "size": [142, 52] },
+    { "id": "validate", "type": "security", "label": "Schema Validation", "sublabel": "before anything renders", "pos": [564, 226], "size": [142, 52] },
+    { "id": "report",   "type": "backend",  "label": "Report Generator",  "sublabel": "template from tipo",     "pos": [826, 226],  "size": [142, 52] },
+    { "id": "informe",  "type": "cloud",    "label": "Client Report",     "sublabel": "one HTML file",          "pos": [1088, 226], "size": [142, 52] },
+    { "id": "seo",      "type": "backend",  "label": "SEO Crawl",         "sublabel": "22 checks, no API key",  "pos": [302, 352],  "size": [142, 52] },
+    { "id": "pages",    "type": "frontend", "label": "Three Pages",       "sublabel": "no framework",           "pos": [302, 478],  "size": [142, 52] },
+    { "id": "build",    "type": "backend",  "label": "build.js",          "sublabel": "minify, zero deps",      "pos": [564, 478],  "size": [142, 52] },
+    { "id": "check",    "type": "security", "label": "build --check",     "sublabel": "same text, same ids",    "pos": [826, 478],  "size": [142, 52] },
+    { "id": "vercel",   "type": "cloud",    "label": "Vercel",            "sublabel": "dist/ · hashed fonts",   "pos": [1088, 478], "size": [142, 52] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "audit-engine — the tooling that produces what the site sells", "wraps": ["apis", "fixtures", "cli", "collect", "validate", "report", "informe", "seo"], "pad": 24 },
+    { "kind": "region", "label": "marketing site — no framework, zero external requests", "wraps": ["pages", "build", "check", "vercel"], "pad": 18 }
+  ],
+  "connections": [
+    { "from": "apis",     "to": "collect",  "label": "lab + field metrics" },
+    { "from": "fixtures", "to": "collect",  "label": "tests, real code paths", "variant": "dashed", "labelAt": [373, 189] },
+    { "from": "cli",      "to": "collect",  "label": "audit.js",              "variant": "emphasis" },
+    { "from": "cli",      "to": "seo",      "label": "seo.js" },
+    { "from": "collect",  "to": "validate", "label": "raw payload",           "variant": "emphasis" },
+    { "from": "seo",      "to": "validate", "label": "22 verdicts" },
+    { "from": "validate", "to": "report",   "label": "tipo picks the template", "variant": "emphasis" },
+    { "from": "report",   "to": "informe",  "label": "rendered",              "variant": "emphasis" },
+    { "from": "pages",    "to": "build",    "label": "source is what you edit" },
+    { "from": "build",    "to": "check",    "label": "minified dist/" },
+    { "from": "check",    "to": "vercel",   "label": "refuses if text moved", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "A silent minifier bug looks like a working site", "items": ["build --check compares source against dist/ before the deploy is allowed", "Text, per-gap whitespace, data-i18n keys, data-* hooks, ids and hrefs", "Any one of them moves and the build refuses — that is the Vercel build command"] },
+    { "dot": "rose", "title": "Two tracks, sold separately", "items": ["Speed guarantees PageSpeed 85+; SEO guarantees every failed check green", "Running both inside one month would force cutting one short", "Then neither guarantee is defensible, so there is no bundle"] },
+    { "dot": "emerald", "title": "No dependencies on either side", "items": ["129 tests on node:test with nothing to install", "The network is intercepted at fetch, so collectors run real code paths on recorded payloads", "The site's pitch is page speed, so shipping a bundle would undercut the product"] }
+  ]
+}
