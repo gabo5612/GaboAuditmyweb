@@ -6,6 +6,10 @@ audit-engine/queue.csv
 audit-engine/auditorias/
 audit-engine/informes/
 audit-engine/analisis/
+audit-engine/prospectos/
+audit-engine/auditorias-seo/
+# Informes publicados en /audit/<token>: viajan en el despliegue, nunca en git.
+publicados/
 
 # Claves
 .env
