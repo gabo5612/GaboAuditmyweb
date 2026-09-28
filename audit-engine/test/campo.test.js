@@ -94,7 +94,7 @@ test('con usuarios reales fallando, el correo dice qué falla y cómo comprobarl
   r.rendimiento.movil.score = 40;
   const [uno] = borradores(r, INF);
   assert.match(uno.texto, /asunto: tienda\.test fails Core Web Vitals on mobile/);
-  assert.match(uno.texto, /longer than 4\.8s/, 'la cifra de campo, no los 12,9 s de laboratorio');
+  assert.match(uno.texto, /longer than 4\.80s/, 'la cifra de campo, no los 12,9 s de laboratorio');
   assert.doesNotMatch(uno.texto, /12\.9|12s/);
   assert.match(uno.texto, /pagespeed\.web\.dev/);
 });
@@ -116,6 +116,7 @@ test('el informe dice sobre qué LCP se calculó, y enseña los dos', async () =
   assert.match(html, /LCP your real visitors get/);
   assert.match(html, /LCP · real users/);
   assert.match(html, /LCP · lab/);
+  assert.doesNotMatch(html, /usuarios reales|laboratorio/, 'la fuente del motor está en español');
 });
 
 test('LCP real en «good» con INP fallando: el titular enseña el INP, no un 0 %', async () => {

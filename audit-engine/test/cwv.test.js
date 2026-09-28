@@ -24,3 +24,14 @@ test('los umbrales son los de Google, y el propio umbral aprueba', () => {
 test('una métrica sin dato no cuenta como fallo', () => {
   assert.deepEqual(fallasCampo(campo(null, 322, null)).fallas.map(f => f.texto), ['INP 322 ms']);
 });
+
+import { borradores } from '../bin/draft.js';
+
+test('el correo trunca el LCP, no lo redondea hacia arriba', () => {
+  const d = {
+    tienda: { host: 'rumpl.com' }, rendimiento: { movil: { score: 36, metricas: { lcp_s: 6.98 } } },
+    campo: campo(2864, 138, 0.03),
+  };
+  const [uno] = borradores(d, { informe: 'https://gaboauditmyweb.dev/audit/' + 'a'.repeat(32), para: 'a@b.com' });
+  assert.match(uno.texto, /longer than 2\.86s/);
+});

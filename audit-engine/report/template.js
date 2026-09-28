@@ -21,6 +21,8 @@ const T = {
     perMonth: '/month',
     assumptions: 'Assumptions',
     source: 'Source',
+    cruxSrc: 'Chrome UX Report (CrUX), real users on phones, 75th percentile',
+    labSrc: 'PageSpeed Insights, lab test',
     cwvFailed: 'Core Web Vitals, real users on phones: failed',
     cwvUnit: 'p75 · CrUX',
     cwvNoMoney: 'Your real-user LCP passes, so there is no revenue figure: the only published coefficient is for load time, and INP or layout shift have none. Rather than invent one, this shows what fails.',
@@ -75,6 +77,8 @@ const T = {
     perMonth: '/mes',
     assumptions: 'Supuestos',
     source: 'Fuente',
+    cruxSrc: 'Chrome UX Report (CrUX), usuarios reales en móvil, percentil 75',
+    labSrc: 'PageSpeed Insights, test de laboratorio',
     cwvFailed: 'Core Web Vitals, usuarios reales en móvil: no aprueba',
     cwvUnit: 'p75 · CrUX',
     cwvNoMoney: 'Tu LCP con usuarios reales aprueba, así que no hay cifra de facturación: el único coeficiente publicado es para el tiempo de carga, y ni el INP ni el desplazamiento de diseño tienen uno. En vez de inventarlo, aquí está lo que falla.',
@@ -230,7 +234,7 @@ function seccionTitular(datos, a, t, movil, dinero, locale) {
     <div class="lbl">${esc(t.costing)}</div>
     <div class="bignum">${cifra}</div>
     ${dinero.formula ? `<div class="formula mono">${esc(dinero.formula)}</div>` : ''}
-    ${dinero.base ? `<div class="prov">${esc(dinero.base === 'campo' ? t.basisField : t.basisLab)} · ${esc(dinero.base_fuente || '')}</div>` : ''}
+    ${dinero.base ? `<div class="prov">${esc(dinero.base === 'campo' ? t.basisField : t.basisLab)} · ${esc(dinero.base === 'campo' ? `${t.cruxSrc}, ${datos.campo?.fecha || ''}` : `${t.labSrc}, ${movil.fecha || ''}`)}</div>` : ''}
 
     <div class="vitals">
       ${vital('PageSpeed', movil.score, null, estadoScore(movil.score))}
@@ -264,7 +268,7 @@ function seccionTitularCwv(datos, a, t, movil, dinero, cwv) {
     <h2 class="diag">${esc(a.diagnostico_una_linea)}</h2>
     <div class="lbl">${esc(t.cwvFailed)}</div>
     <div class="bignum">${cwv.fallas.map(f => esc(f.texto)).join(' · ')}<span class="unit">${esc(t.cwvUnit)}</span></div>
-    <div class="prov">${esc(cwv.fuente || '')} · ${esc(cwv.fecha || '')}</div>
+    <div class="prov">${esc(t.cruxSrc)} · ${esc(cwv.fecha || '')}</div>
     <p class="prov">${esc(t.cwvNoMoney)}</p>
 
     <div class="vitals">
@@ -325,7 +329,7 @@ function seccionCompetencia(datos, t) {
         <div class="row__val mono">${f.lcp ?? '—'}s</div>
       </div>`).join('')}
     </div>
-    <p class="prov">${esc(t.source)}: ${campo ? `${esc(datos.competencia[0].campo.fuente || 'CrUX')} · ${esc(datos.competencia[0].campo.fecha || '')}` : `PageSpeed Insights · ${esc(datos.competencia[0].fecha)}`}</p>
+    <p class="prov">${esc(t.source)}: ${campo ? `${esc(t.cruxSrc)} · ${esc(datos.competencia[0].campo.fecha || '')}` : `PageSpeed Insights · ${esc(datos.competencia[0].fecha)}`}</p>
   </section>`;
 }
 
@@ -519,6 +523,8 @@ h1,h2,h3,h4{letter-spacing:-.02em;margin:0}
 .find p{margin:0 0 12px;color:var(--ink2);font-size:15px}
 .cost{color:var(--ink) !important}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+/* La mejora estimada es una frase, no una etiqueta: puede partir línea. */
+.qw__foot .pill{white-space:normal;border-radius:12px;line-height:1.5}
 .pill--alto,.pill--bad{background:rgba(229,72,77,.14);color:var(--bad)}
 .pill--medio,.pill--warn{background:rgba(201,133,0,.14);color:var(--warn)}
 .pill--bajo,.pill--good{background:rgba(16,172,112,.14);color:var(--brand-hi)}

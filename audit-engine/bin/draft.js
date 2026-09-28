@@ -30,7 +30,9 @@ const CAL = 'https://cal.com/gabriel-arias-dev/audit';
 /* Qué significa cada fallo para quien compra, en una frase. Sin cifras
    nuevas: sólo el valor medido y el umbral de Google. */
 const QUE_SIGNIFICA = {
-  LCP: f => `the main content takes longer than ${(f.valor / 1000).toFixed(1)}s to appear for 1 in 4 of your mobile visitors (Google's "good" line is 2.5s)`,
+  // Truncado, nunca redondeado hacia arriba: «más de 2,9 s» con un p75 de
+  // 2,86 s exagera, y el prospecto lo comprueba en un clic.
+  LCP: f => `the main content takes longer than ${(Math.floor(f.valor / 10) / 100).toFixed(2)}s to appear for 1 in 4 of your mobile visitors (Google's "good" line is 2.5s)`,
   INP: f => `for 1 in 4 of your mobile visitors, a tap takes more than ${Math.round(f.valor)} ms to visibly respond (Google's "good" line is 200 ms), which is when "Add to cart" gets tapped twice or abandoned`,
   CLS: f => `the page jumps around while it loads (layout shift ${f.valor.toFixed(2)}, Google's "good" line is 0.1), so people tap the wrong thing`,
 };

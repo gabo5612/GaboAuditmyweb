@@ -93,6 +93,11 @@ Sprint.
 
 ### Datos faltantes, en el idioma del informe
 
+- La `fuente` de cada evidencia también va en el idioma del informe: el
+  motor escribe «CrUX History API (percentil 75, usuarios reales)», y en un
+  informe en inglés eso es «Chrome UX Report (CrUX), real users on phones,
+  75th percentile».
+
 - `datos_faltantes` del análisis debe incluir **cada** entrada de
   `datos_faltantes` del JSON, traducida al idioma del informe, más las tuyas.
   El motor las escribe en español y el informe sólo imprime las del
