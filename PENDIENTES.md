@@ -182,15 +182,16 @@ Lo único que mueve el objetivo de €4.500/mes.
 - [ ] Correr el lote sobre esas 20 (`bin/batch.js` + Actions ya construidos)
 - [ ] **Grabar 5 Looms y enviar 5 emails — a mano, sin esperar a la fase 3**
 - [ ] Subir a 10 emails/día → 50/semana
-- [ ] SPF, DKIM y DMARC configurados **antes** del primer envío
+- [x] SPF, DKIM y DMARC publicados y dominio verificado en Resend (28 sep)
 - [ ] Calentamiento de dominio: 10 emails/día la primera semana
 - [ ] Enlace de baja **y dirección postal física** en todos los emails; la segunda la exige CAN-SPAM en EE. UU.
 
-**Resend:** cuenta creada; **desbloqueada** desde el 28 sep — falta añadir
-`send.gaboauditmyweb.dev` en el panel y pegar sus registros (ver `OUTBOUND.md`). El plan gratuito da 3.000
-correos/mes y 100/día contra los ~215/mes que necesitas, así que no hará falta
-pagarlo. Configuración, registros DNS, calentamiento y las tres plantillas de
-correo, en `OUTBOUND.md`.
+**Resend:** conectado desde Vercel el 28 sep, sobre el dominio raíz —
+remitente `gabriel@gaboauditmyweb.dev`, siempre con `reply-to` a Gmail porque
+la raíz no recibe correo. Dominio verificado y primer envío de prueba entregado
+(28 sep); falta confirmar que cae en bandeja de entrada. El plan gratuito da 3.000
+correos/mes y 100/día contra los ~215/mes que necesitas. Detalle y
+plantillas en `OUTBOUND.md`.
 - [ ] Cuenta de Loom — el plan free da 25 vídeos; se toca techo rápido a 20/día
 - [ ] Perfil en Shopify Partners
 - [ ] Perfil ultra-especializado en Upwork (solo trabajos de €2.000+)

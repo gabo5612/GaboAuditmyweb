@@ -1,7 +1,7 @@
 # Outbound — correo en frío
 
 **Fecha de corte:** 13 de agosto de 2026
-**Estado:** cuenta de Resend creada · dominio `gaboauditmyweb.dev` comprado el 28 sep · DMARC `p=none` publicado · **falta verificar `send.` en Resend**
+**Estado (28 sep):** dominio `gaboauditmyweb.dev` en producción · Resend conectado desde Vercel, registros DKIM/SPF/MX publicados y resolviendo · DMARC `p=none` · dominio **verificado** en Resend (región eu-west-1, seguimiento de aperturas y clics apagado) · primer envío de prueba a Gmail: `delivered` · **falta confirmar bandeja de entrada y SPF/DKIM/DMARC en PASS**
 
 Este documento es el bloque 4 de `PENDIENTES.md` desarrollado. No es código:
 la fase 3 del workflow (cola, envío automático, panel de aprobación) sigue sin
@@ -28,27 +28,45 @@ Nunca vas a necesitar el plan de pago para esto.
 
 ## Configuración de Resend, en orden
 
-### 1. Envía desde un subdominio, no desde la raíz
+### 1. Lo que quedó: el dominio raíz, no un subdominio
 
-`send.gaboauditmyweb.dev`, no `gaboauditmyweb.dev`. Es la recomendación de Resend y el
-motivo es de reputación: si quemas el subdominio con correo en frío, el
-dominio raíz —el de tus facturas, el de tu Cal.com, el de los informes— no se
-va contigo. Separarlos después es mucho más caro que separarlos ahora.
+La recomendación original era añadir `send.gaboauditmyweb.dev` para que el
+correo en frío no pudiera quemar el dominio raíz. Al conectar Resend desde
+la integración de Vercel se añadió **`gaboauditmyweb.dev`**, así que el
+remitente es `gabriel@gaboauditmyweb.dev`. Se deja así, deliberadamente:
 
-Dirección de envío sugerida: `gabriel@send.gaboauditmyweb.dev`, con
-`reply-to` al buzón que leas de verdad.
+- Lo que la separación protegía aquí no existe. Las facturas y el correo
+  personal salen de Gmail, y la reputación de envío no toca la web ni los
+  informes publicados en ella.
+- Moverlo a un subdominio ahora es borrar el dominio en Resend y empezar la
+  verificación de cero, por un riesgo que a 10 correos/día escritos a mano
+  es bajo.
 
-### 2. Los registros DNS que da Resend
+Si algún día el dominio empieza a recibir correo propio (facturas, soporte),
+entonces sí: nuevo dominio `send.` en Resend y el frío se muda allí.
 
-Los genera él al añadir el dominio y son distintos para cada uno — el selector
-DKIM es único, así que no se pueden dejar escritos aquí. Van **todos sobre el
-subdominio**, nunca sobre la raíz:
+**La raíz no tiene MX.** Una respuesta a `gabriel@gaboauditmyweb.dev` rebota,
+así que **todo envío lleva `reply-to: gabrielariasdev@gmail.com`**. Sin eso, el
+prospecto que contesta —que es lo único que se busca— se encuentra un error.
 
-- `MX` — sobre `send.gaboauditmyweb.dev`
-- `TXT` de SPF — sobre `send.gaboauditmyweb.dev`
-- `TXT` de DKIM — `resend._domainkey.send.gaboauditmyweb.dev`
+### 2. Los registros, tal como están publicados
 
-Suele verificar en 15 minutos, aunque el DNS puede tardar hasta 72 horas.
+Los creó la integración directamente en el DNS de Vercel:
+
+| Nombre | Tipo | Valor |
+|---|---|---|
+| `resend._domainkey` | TXT | DKIM (`p=MIGfMA0…`) |
+| `send` | TXT | `v=spf1 include:amazonses.com ~all` |
+| `send` | MX | `10 feedback-smtp.eu-west-1.amazonses.com` |
+
+`send.` es el *return-path*: el dominio del sobre, donde Amazon SES recibe los
+rebotes. Por eso SPF va ahí y no en la raíz, y DMARC alinea igual porque el
+DKIM firma con `d=gaboauditmyweb.dev`. Comprobar con
+`dig +short TXT resend._domainkey.gaboauditmyweb.dev @1.1.1.1`.
+
+La API key vive en `audit-engine/.env` como `RESEND_API_KEY` (gitignored).
+No hay código de envío en el repo: la fase 3 sigue sin construirse, y los
+primeros correos se mandan de uno en uno.
 
 ### 3. DMARC lo pones tú
 
@@ -189,7 +207,7 @@ gratis en su panel y conviene mirar desde el primer día:
 ## Orden de ejecución
 
 1. ~~Comprar el dominio~~ ✓ `gaboauditmyweb.dev`
-2. Añadirlo en Resend ← **aquí**, subdominio `send.`, pegar los tres registros
+2. ~~Conectar Resend~~ ✓ desde Vercel, registros publicados — verificado; prueba a Gmail entregada — confirmar que cayó en Principal y no en Spam ← **aquí**
 3. ~~DMARC en `p=none`~~ ✓ — falta `rua` para recibir los informes
 4. Correr el lote sobre las 20 tiendas peores
 5. Grabar 5 Looms, enviar 5 correos **a mano** el primer día
