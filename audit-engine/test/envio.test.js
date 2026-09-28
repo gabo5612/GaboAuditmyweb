@@ -38,3 +38,8 @@ test('el pie lleva la dirección postal y la forma de darse de baja (CAN-SPAM)',
   assert.match(p, /unsubscribe/i);
   assert.match(p, /gaboauditmyweb\.dev/);
 });
+
+test('el teléfono va en el pie si está configurado, y no deja un separador colgando si no', () => {
+  assert.match(pie('X', '+49 151 26044084'), /gaboauditmyweb\.dev · \+49 151 26044084/);
+  assert.doesNotMatch(pie('X'), /· \n/);
+});

@@ -68,8 +68,9 @@ export function leerBorrador(txt) {
   return { cab, cuerpo: m[2].trim() };
 }
 
-export function pie(direccion) {
-  return `\n\n--\nGabriel Arias · Shopify performance & technical SEO · https://gaboauditmyweb.dev\n${direccion}\nNot interested? Reply "unsubscribe" and you will not hear from me again.`;
+export function pie(direccion, telefono = '') {
+  const linea = ['Gabriel Arias · Shopify performance & technical SEO · https://gaboauditmyweb.dev', telefono].filter(Boolean).join(' · ');
+  return `\n\n--\n${linea}\n${direccion}\nNot interested? Reply "unsubscribe" and you will not hear from me again.`;
 }
 
 const leerCsv = async ruta => {
@@ -118,7 +119,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       to: [para],
       reply_to: RESPUESTAS,
       subject: cab.asunto,
-      text: cuerpo + pie(direccion),
+      text: cuerpo + pie(direccion, process.env.OUTBOUND_TELEFONO),
       headers: { 'List-Unsubscribe': `<${BAJA_MAILTO}>` },
     }),
   });
