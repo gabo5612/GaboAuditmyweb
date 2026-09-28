@@ -92,6 +92,14 @@ export function validarAnalisis(a, datos) {
   // ── Regla 1: ningún número puede salir de la nada. ───────────────
   for (const inventado of numerosInventados(a, datos)) A(inventado);
 
+  /* El motor registra lo que no midió en español; el informe va en el
+     idioma del cliente y sólo imprime la lista del análisis. Si el análisis
+     no las recoge todas, traducidas, una falta desaparece del informe. */
+  const faltanMotor = (datos?.datos_faltantes || []).length;
+  if ((a.idioma || 'en') !== 'es' && (a.datos_faltantes || []).length < faltanMotor) {
+    E(`datos_faltantes: el motor registró ${faltanMotor} y el análisis trae ${(a.datos_faltantes || []).length}. Tradúcelas todas al idioma del informe.`);
+  }
+
   return { ok: errores.length === 0, errores, avisos };
 }
 
@@ -194,6 +202,14 @@ export function validarAnalisisSeo(a, datos) {
   const fallos = datos?.resumen?.falla;
   if (fallos != null && fallos <= 1 && a.confianza !== 'baja') {
     E(`sólo ${fallos} comprobación(es) fallida(s): la confianza debe ser "baja" y el diagnóstico decir que la base técnica está en orden`);
+  }
+
+  /* El motor registra lo que no midió en español; el informe va en el
+     idioma del cliente y sólo imprime la lista del análisis. Si el análisis
+     no las recoge todas, traducidas, una falta desaparece del informe. */
+  const faltanMotor = (datos?.datos_faltantes || []).length;
+  if ((a.idioma || 'en') !== 'es' && (a.datos_faltantes || []).length < faltanMotor) {
+    E(`datos_faltantes: el motor registró ${faltanMotor} y el análisis trae ${(a.datos_faltantes || []).length}. Tradúcelas todas al idioma del informe.`);
   }
 
   return { ok: errores.length === 0, errores, avisos };

@@ -82,6 +82,13 @@ trae; quitar una fuente que no se usa.
 Reciprocidad: el que aplica tu consejo gratis y ve que funciona, contrata el
 Sprint.
 
+### Datos faltantes, en el idioma del informe
+
+- `datos_faltantes` del análisis debe incluir **cada** entrada de
+  `datos_faltantes` del JSON, traducida al idioma del informe, más las tuyas.
+  El motor las escribe en español y el informe sólo imprime las del
+  análisis: si falta una, desaparece del informe. `validate.js` lo comprueba.
+
 ### Límites de la entrada que debes respetar
 
 - `apps.alcance`: sólo se ven las apps del HTML inicial. Nunca escribas "no

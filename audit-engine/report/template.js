@@ -20,6 +20,10 @@ const T = {
     perMonth: '/month',
     assumptions: 'Assumptions',
     source: 'Source',
+    basisField: 'Calculated on the LCP your real visitors get',
+    basisLab: 'Calculated on the lab LCP: no real-user data exists for this store',
+    lcpLab: 'LCP · lab',
+    lcpField: 'LCP · real users',
     vsCompetitors: 'You against your competitors',
     vsIntro: 'Same test, same day, same connection. Mobile largest contentful paint.',
     you: 'You',
@@ -66,6 +70,10 @@ const T = {
     perMonth: '/mes',
     assumptions: 'Supuestos',
     source: 'Fuente',
+    basisField: 'Calculado sobre el LCP que ven tus visitantes reales',
+    basisLab: 'Calculado sobre el LCP de laboratorio: no hay datos de usuarios reales de esta tienda',
+    lcpLab: 'LCP · laboratorio',
+    lcpField: 'LCP · usuarios reales',
     vsCompetitors: 'Tú frente a tu competencia',
     vsIntro: 'Mismo test, mismo día, misma conexión. Largest contentful paint en móvil.',
     you: 'Tú',
@@ -204,10 +212,13 @@ function seccionTitular(datos, a, t, movil, dinero, locale) {
     <div class="lbl">${esc(t.costing)}</div>
     <div class="bignum">${cifra}</div>
     ${dinero.formula ? `<div class="formula mono">${esc(dinero.formula)}</div>` : ''}
+    ${dinero.base ? `<div class="prov">${esc(dinero.base === 'campo' ? t.basisField : t.basisLab)} · ${esc(dinero.base_fuente || '')}</div>` : ''}
 
     <div class="vitals">
       ${vital('PageSpeed', movil.score, null, estadoScore(movil.score))}
-      ${vital('LCP', movil.metricas.lcp_s, 's', estadoLcp(movil.metricas.lcp_s))}
+      ${dinero.base === 'campo'
+        ? `${vital(t.lcpField, dinero.lcp_s, 's', estadoLcp(dinero.lcp_s))}${vital(t.lcpLab, movil.metricas.lcp_s, 's', estadoLcp(movil.metricas.lcp_s))}`
+        : vital('LCP', movil.metricas.lcp_s, 's', estadoLcp(movil.metricas.lcp_s))}
       ${vital('CLS', movil.metricas.cls, '', umbral(movil.metricas.cls, 0.1, 0.25))}
       ${vital('TBT', movil.metricas.tbt_ms, 'ms', umbral(movil.metricas.tbt_ms, 200, 600))}
     </div>
@@ -383,7 +394,9 @@ function seccionCta(o, t) {
 
 /* ── Provenance: lo que no se pudo medir ─────────────────────────── */
 function seccionFaltantes(datos, a, t) {
-  const faltantes = [...new Set([...(datos.datos_faltantes || []), ...(a.datos_faltantes || [])])];
+  /* Las del motor están en español: en otro idioma sólo cuenta la lista del
+     análisis, que validate.js obliga a traer completa y traducida. */
+  const faltantes = [...new Set([...((a.idioma || 'en') === 'es' ? datos.datos_faltantes || [] : []), ...(a.datos_faltantes || [])])];
   if (!faltantes.length) return '';
   return `
   <section class="sec sec--quiet">

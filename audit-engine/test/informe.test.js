@@ -104,7 +104,15 @@ describe('report/template.js', () => {
     const { datos, analisis } = await cargar();
     const html = renderInforme(datos, analisis, {});
     assert.ok(html.includes('could not measure'));
-    assert.ok(html.includes(datos.datos_faltantes[0]));
+    assert.ok(html.includes(analisis.datos_faltantes[0]));
+  });
+
+  test('en inglés no se cuela la lista del motor, que está en español', async () => {
+    const { datos, analisis } = await cargar();
+    const html = renderInforme(datos, analisis, {});
+    for (const f of datos.datos_faltantes) assert.ok(!html.includes(f), `se coló: ${f}`);
+    const es = renderInforme(datos, { ...analisis, idioma: 'es' }, {});
+    assert.ok(es.includes(datos.datos_faltantes[0]), 'en español sí se imprime');
   });
 
   test('omite las secciones sin datos en lugar de dejarlas vacías', async () => {

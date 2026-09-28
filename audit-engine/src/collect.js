@@ -23,7 +23,7 @@ import { calcularScore, detectarMoneda } from './score.js';
  */
 export async function auditar(entrada, opciones = {}) {
   const {
-    competidores = [], facturacion = null, moneda = 'EUR', facturacionRango = null,
+    competidores = [], facturacion = null, moneda = null, facturacionRango = null,
     /* 1 por defecto en la biblioteca; los bin/ piden 3. Así la cuota de un
        uso programático no se triplica sin que nadie lo haya decidido. */
     corridas = 1,
@@ -169,7 +169,25 @@ export async function auditar(entrada, opciones = {}) {
   const psiMovil = elegirMediana(corridasMovil);
 
   // ── Dinero y prioridad ────────────────────────────────────────────
-  const dinero = calcularPerdida(psiMovil.metricas.lcp_s, facturacion, moneda);
+  /* La pérdida se calcula sobre lo que viven los clientes, no sobre el
+     teléfono emulado de Lighthouse. NaturVet (28 sep): 12,87 s de LCP en
+     laboratorio, 1,93 s en el p75 de usuarios reales. Con el de laboratorio
+     el informe decía «pierdes el 45 % de la facturación» a una tienda que
+     aprueba Core Web Vitals, y PageSpeed enseña el dato de campo arriba del
+     todo: el prospecto lo desmiente en un clic. El de laboratorio sigue en
+     rendimiento.movil para el diagnóstico — el porqué, no el cuánto. */
+  const lcpCampoMs = crux?.disponible ? crux.series?.largest_contentful_paint?.ultimo : null;
+  const baseCampo = Number.isFinite(lcpCampoMs) && lcpCampoMs > 0;
+  const lcpDinero = baseCampo ? Math.round(lcpCampoMs / 10) / 100 : psiMovil.metricas.lcp_s;
+  const dinero = {
+    ...calcularPerdida(lcpDinero, facturacion, moneda || monedaActiva || 'USD'),
+    base: baseCampo ? 'campo' : 'laboratorio',
+    base_fuente: baseCampo ? `${crux.fuente}, ${crux.fecha}` : `PageSpeed Insights (laboratorio), ${psiMovil.fecha}`,
+    lcp_laboratorio_s: psiMovil.metricas.lcp_s,
+  };
+  if (!baseCampo) {
+    faltantes.push('Sin dato de usuarios reales (CrUX): la pérdida se calcula sobre el LCP de laboratorio, que en un teléfono emulado suele ser peor que el real.');
+  }
   if (!dinero.medible) {
     // PSI respondió pero sin LCP. Rellenarlo con un 0 % tranquilizador es
     // exactamente el fallo que el motor existe para no cometer.
@@ -180,7 +198,7 @@ export async function auditar(entrada, opciones = {}) {
   }
 
   const score = calcularScore({
-    psiMovil, apps, tema, moneda: monedaActiva, host, facturacionRango,
+    psiMovil, apps, tema, moneda: monedaActiva, host, facturacionRango, dinero,
   });
 
   return {

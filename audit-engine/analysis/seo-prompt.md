@@ -110,3 +110,9 @@ Search Console.
   bots concretos se ignoran a propósito y no son hallazgos.
 - `alt_imagenes`: `alt=""` es correcto en imágenes decorativas. El fallo es
   la ausencia del atributo, no el vacío.
+
+### Datos faltantes, en el idioma del informe
+
+`datos_faltantes` del análisis debe incluir **cada** entrada de
+`datos_faltantes` del JSON, traducida al idioma del informe, más las tuyas.
+El informe sólo imprime las del análisis; `validate.js` lo comprueba.

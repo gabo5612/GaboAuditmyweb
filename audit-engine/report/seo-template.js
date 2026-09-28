@@ -368,7 +368,9 @@ function seccionCta(o, t) {
 }
 
 function seccionFaltantes(datos, a, t) {
-  const faltantes = [...new Set([...(datos.datos_faltantes || []), ...(a.datos_faltantes || [])])];
+  /* Las del motor están en español: en otro idioma sólo cuenta la lista del
+     análisis, que validate.js obliga a traer completa y traducida. */
+  const faltantes = [...new Set([...((a.idioma || 'en') === 'es' ? datos.datos_faltantes || [] : []), ...(a.datos_faltantes || [])])];
   if (!faltantes.length) return '';
   return `
   <section class="sec sec--quiet">

@@ -10,7 +10,7 @@ const TLD_GEO = {
   '.co.uk': 'UK', '.uk': 'UK', '.ca': 'CA', '.com.au': 'AU', '.au': 'AU', '.us': 'US',
 };
 
-export function calcularScore({ psiMovil, apps, tema, moneda, host, facturacionRango }) {
+export function calcularScore({ psiMovil, apps, tema, moneda, host, facturacionRango, dinero = null }) {
   const señales = [];
   let total = 0;
 
@@ -27,6 +27,11 @@ export function calcularScore({ psiMovil, apps, tema, moneda, host, facturacionR
     // Doc §③ regla 6: un "tu tienda va bien" honesto gana más respeto que un
     // informe inflado. Este −40 es lo que empuja ese caso al final de la cola.
     suma(-40, 'PageSpeed móvil por encima de 75 — poco que vender', `score ${score}`);
+  }
+  /* Si los usuarios reales ya ven el LCP en «good», un score de laboratorio
+     bajo no es una venta: es un correo que el prospecto desmiente. */
+  if (dinero?.base === 'campo' && dinero.lcp_s <= 2.5) {
+    suma(-40, 'Usuarios reales ya con LCP en «good» (CrUX p75)', `${dinero.lcp_s}s`);
   }
   if (apps?.total > 15) {
     suma(20, 'Más de 15 apps detectadas', `${apps.total} apps`);

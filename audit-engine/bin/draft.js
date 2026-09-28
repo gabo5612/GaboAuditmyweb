@@ -30,7 +30,10 @@ export function borradores(datos, { informe, para, nombre = '', loom = null, sin
   const host = datos.tienda.host.replace(/^www\./, '');
   const movil = datos.rendimiento.movil;
   const score = movil.score;
-  const lcp = movil.metricas.lcp_s;
+  /* El asunto usa el mismo LCP que la pérdida: el de usuarios reales si
+     existe. Un asunto con el de laboratorio lo desmiente PageSpeed en la
+     primera pantalla, que es la que abre el prospecto. */
+  const lcp = datos.dinero?.base === 'campo' ? datos.dinero.lcp_s : movil.metricas.lcp_s;
   if (!Number.isFinite(lcp) || !Number.isFinite(score)) throw new Error('la auditoría no tiene score o LCP móvil');
   if (score > 75) throw new Error(`score móvil ${score}: por encima de 75 hay poco que vender, y un correo de "tu tienda es lenta" sería falso`);
   const n = Math.floor(lcp);
@@ -44,7 +47,7 @@ export function borradores(datos, { informe, para, nombre = '', loom = null, sin
 
   const uno = [
     hola, '',
-    `I ran PageSpeed against ${host} this week. Mobile score ${score}, and the largest element paints at around ${n} seconds — your customer is looking at a mostly empty screen for most of that.`,
+    `I ran PageSpeed against ${host} this week. Mobile score ${score}, and ${datos.dinero?.base === 'campo' ? 'for your real visitors on phones' : 'in the mobile test'} the largest element paints at around ${n} seconds — your customer is looking at a mostly empty screen for most of that.`,
     ...(lineaLoom ? ['', lineaLoom] : []),
     '', `Full audit here, free, yours to keep whatever you do next: ${informe}`,
     '', 'There is one fix in there you can apply today without a developer, in about ten minutes. No reply needed for that one — just take it.',
