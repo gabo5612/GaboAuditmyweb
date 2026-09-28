@@ -162,11 +162,22 @@ function analizarFuentes(html) {
  * Primero por los endpoints públicos de Shopify; si están capados, por los
  * enlaces del propio HTML de la home.
  */
+/* Primero lo que la home enlaza, y sólo si no enlaza nada, products.json.
+   products.json empieza por lo último creado, que en muchas tiendas es un
+   complemento o una copia oculta a propósito («headboard-add-on-cherry»,
+   «…-sachet-5ml-copy»): el lote del 28 sep 2026 marcó 7 de 60 tiendas con
+   «plantilla en noindex» por eso, y en esas páginas el noindex es correcto.
+   Lo que la home enlaza es lo que la tienda quiere público: ahí un noindex
+   sí es un fallo. */
 export async function descubrirPaginas(origin, homeHtml) {
-  const producto = await primerHandle(unirUrl(origin, '/products.json?limit=1'), 'products')
-    || primerEnlace(homeHtml, origin, '/products/');
-  const coleccion = await primerHandle(unirUrl(origin, '/collections.json?limit=1'), 'collections')
-    || primerEnlace(homeHtml, origin, '/collections/');
+  /* /collections/x/products/y es la misma ficha en otra ruta, y su canonical
+     apunta —bien— a /products/y: tomarla como muestra haría fallar
+     «canonical autorreferente» a una tienda que lo tiene correcto. */
+  const enlazado = primerEnlace(homeHtml, origin, '/products/');
+  const producto = (enlazado && enlazado.replace(/\/collections\/[^/]+(?=\/products\/)/, ''))
+    || await primerHandle(unirUrl(origin, '/products.json?limit=1'), 'products');
+  const coleccion = primerEnlace(homeHtml, origin, '/collections/', /\/collections\/(all|frontpage|vendors|types)(\/|$)/)
+    || await primerHandle(unirUrl(origin, '/collections.json?limit=1'), 'collections');
 
   log(`  · producto: ${producto || 'no encontrado'}`);
   log(`  · colección: ${coleccion || 'no encontrada'}`);
@@ -183,11 +194,17 @@ async function primerHandle(url, clave) {
   } catch { return null; }
 }
 
-function primerEnlace(html, origin, prefijo) {
+function primerEnlace(html, origin, prefijo, excluir = null) {
   if (!html) return null;
-  const re = new RegExp(`href=["']([^"']*${prefijo}[^"'?#]+)`, 'i');
-  const m = html.match(re);
-  if (!m) return null;
-  const abs = absolutizar(m[1], origin);
-  return hostOf(abs) === hostOf(origin) ? abs : null;
+  const re = new RegExp(`href=["']([^"']*${prefijo}[^"'?#]+)`, 'gi');
+  for (const m of html.matchAll(re)) {
+    const abs = absolutizar(m[1], origin);
+    if (hostOf(abs) !== hostOf(origin)) continue;
+    // /collections/all y compañía son listados automáticos, no una colección
+    // que alguien haya montado; /collections/x/products/y es un producto.
+    if (excluir && excluir.test(new URL(abs).pathname)) continue;
+    if (prefijo === '/collections/' && /\/products\//.test(abs)) continue;
+    return abs;
+  }
+  return null;
 }

@@ -109,15 +109,34 @@ export function leerMetadatos(pagina) {
 /** Bloques JSON-LD, aplanando @graph, que es como los sirve la mitad de
     los temas. Un bloque que no parsea se cuenta como roto, no se ignora:
     Google tampoco lo lee. */
+/* Tres casos, no dos (lote del 28 sep 2026, hawkinsnewyork.com):
+
+   - vacío: un <script type="application/ld+json"></script> sin nada dentro
+     no hace daño a nadie. No cuenta.
+   - tolerable: sólo le sobran saltos de línea o tabuladores crudos dentro de
+     una cadena (una descripción de producto pegada tal cual por Liquid).
+     JSON.parse lo rechaza; el parser de Google es más tolerante, y afirmar
+     que Google no lo lee sería inventar. Se lee igual —así se ve el Product
+     que lleva dentro— y se cuenta aparte, como aviso.
+   - roto: no se puede leer de ninguna manera. Eso sí es un fallo. */
 export function leerJsonLd(html) {
   const bloques = [];
   let rotos = 0;
+  let tolerables = 0;
   let m;
   while ((m = RE_JSONLD.exec(String(html || '')))) {
+    const texto = m[1].trim();
+    if (!texto) continue;
+    let parsed;
     try {
-      const parsed = JSON.parse(m[1].trim());
-      for (const nodo of aplanar(parsed)) bloques.push(nodo);
-    } catch { rotos++; }
+      parsed = JSON.parse(texto);
+    } catch {
+      try {
+        parsed = JSON.parse(escaparControlesEnCadenas(texto));
+        tolerables++;
+      } catch { rotos++; continue; }
+    }
+    for (const nodo of aplanar(parsed)) bloques.push(nodo);
   }
   RE_JSONLD.lastIndex = 0;
 
@@ -125,7 +144,25 @@ export function leerJsonLd(html) {
     tipos: [...new Set(bloques.map(b => tipoDe(b)).filter(Boolean))],
     bloques,
     rotos,
+    tolerables,
   };
+}
+
+/** Escapa \n, \r y \t crudos, pero sólo dentro de cadenas JSON. */
+function escaparControlesEnCadenas(t) {
+  let out = '', enCadena = false, escape = false;
+  for (const ch of t) {
+    if (enCadena) {
+      if (escape) { escape = false; out += ch; continue; }
+      if (ch === '\\') { escape = true; out += ch; continue; }
+      if (ch === '"') enCadena = false;
+      out += ch === '\n' ? '\\n' : ch === '\r' ? '\\r' : ch === '\t' ? '\\t' : ch;
+    } else {
+      if (ch === '"') enCadena = true;
+      out += ch;
+    }
+  }
+  return out;
 }
 
 function aplanar(nodo) {
@@ -320,8 +357,24 @@ export async function comprobarRutaDuplicada(urlProducto, urlColeccion) {
   };
 }
 
+/* Dos normalizaciones, las dos por falsos positivos del lote del 28 sep:
+
+   - Prefijo de mercado. Con Shopify Markets, una IP europea recibe una
+     redirección a /en-eu/products/x y su canonical, bien puesto, apunta a
+     /en-eu/products/x. Googlebot rastrea desde EE. UU. y nunca ve ese
+     prefijo. Auditando desde Berlín, sin esto, la tienda «fallaba» por
+     nuestra ubicación. Se compara la ruta sin el segmento de idioma-mercado.
+   - Codificación. %e2%84%a2 y %E2%84%A2 son la misma URL (RFC 3986 §6.2.2.1). */
+const MERCADO = /^\/[a-z]{2}(?:-[a-z]{2})?(?=\/)/i;
+export function rutaNormalizada(url) {
+  const p = new URL(url).pathname
+    .replace(/%[0-9a-f]{2}/gi, m => m.toUpperCase())
+    .replace(MERCADO, '')
+    .replace(/\/$/, '');
+  return p || '/';
+}
 const mismaRuta = (a, b) => {
-  try { return new URL(a).pathname.replace(/\/$/, '') === new URL(b).pathname.replace(/\/$/, ''); }
+  try { return rutaNormalizada(a) === rutaNormalizada(b); }
   catch { return false; }
 };
 
@@ -553,10 +606,16 @@ export function comprobar({ origin, paginas, robots, sitemap, notFound, duplicad
         { valor: `${conMeta.length} de ${conMeta.length}`, grupo: 'enriquecidos' }));
 
   const rotos = conMeta.reduce((n, m) => n + m.json_ld.rotos, 0);
+  const tolerables = conMeta.reduce((n, m) => n + (m.json_ld.tolerables || 0), 0);
   c.push(rotos
     ? nuevo('json_ld_valido', 'Ningún bloque JSON-LD roto', 'falla', {
         valor: `${rotos} bloque(s) no parsean`,
         evidencia: 'un JSON-LD que no parsea no lo lee nadie: equivale a no tenerlo',
+        grupo: 'enriquecidos',
+      })
+    : tolerables ? nuevo('json_ld_valido', 'Ningún bloque JSON-LD roto', 'aviso', {
+        valor: `${tolerables} bloque(s) con saltos de línea crudos dentro de una cadena`,
+        evidencia: 'JSON estricto los rechaza; el parser de Google suele tolerarlos. Escaparlos cuesta una línea de Liquid (| json) y quita la duda',
         grupo: 'enriquecidos',
       })
     : nuevo('json_ld_valido', 'Ningún bloque JSON-LD roto', 'pasa',
