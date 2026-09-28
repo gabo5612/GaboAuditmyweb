@@ -93,7 +93,7 @@ La web no se puede publicar sin esto. No es código, es criterio.
 - [ ] **Respuestas del FAQ** — siguen marcadas `Placeholder.` salvo `faq.a2`, reescrita con los 50 días
 
 - [x] **Cal.com creado y enlazado** — `cal.com/gabriel-arias-dev/audit`. Enlace, no embed: el script de Cal.com sería un tercero en la web cuyo argumento es la velocidad. No hizo falta API key. Los CTA de auditoría siguen en `mailto:` a propósito — no son una reserva. El sitio principal de la llamada es el final del informe, vía `bin/report.js --cal`
-- [ ] **Confirmar que el evento `/audit` dura 20 minutos.** Cinco sitios del copy prometen veinte: `cta.bookLink` en las dos páginas, `report.p7`, y `t.cta` en las dos plantillas de informe. El slug ya no lo delata, pero el cliente ve la duración al reservar
+- [x] **Evento `/audit` de Cal.com: 20 minutos, confirmado (28 sep).** Coincide con los cinco sitios del copy que lo prometen
 - [ ] **Verificar contra fuente primaria** el coeficiente de 0,8 % por cada 100 ms y las tres tarjetas de estadística. Es la única cifra del sistema sin procedencia real, y vive en la calculadora de la home — en un sitio cuya regla 4 es "sin fuente, no hay número"
 - [ ] **Caso de estudio 01** — captura antes, captura después, fecha de cada una
 - [ ] **Caso de estudio 02** — necesita permiso del cliente. Mientras no exista: teardown de tienda pública etiquetado como tal (`Public store teardown — unaffiliated demo`)

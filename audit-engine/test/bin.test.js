@@ -30,3 +30,10 @@ test('bin/batch.js llega hasta el resumen', async () => {
   assert.doesNotMatch(r.stdout + r.stderr, /ReferenceError|TypeError/, r.stderr);
   assert.ok(existsSync(dir + '/out/resumen-seo.csv'), 'escribió resumen-seo.csv');
 });
+
+import { sinClave } from '../src/util.js';
+
+test('la API key nunca aparece en un mensaje de error (repo y logs públicos)', () => {
+  assert.equal(sinClave('https://x/runPagespeed?url=a&key=AIzaSECRET&strategy=mobile'),
+    'https://x/runPagespeed?url=a&key=***&strategy=mobile');
+});

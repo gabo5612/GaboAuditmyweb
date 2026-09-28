@@ -30,7 +30,7 @@ export async function fetchRetry(url, {
       });
       // 429 y 5xx merecen reintento; 4xx restantes no van a mejorar.
       if (res.status === 429 || res.status >= 500) {
-        lastErr = new Error(`HTTP ${res.status} en ${url}`);
+        lastErr = new Error(`HTTP ${res.status} en ${sinClave(url)}`);
         continue;
       }
       return res;
@@ -58,19 +58,19 @@ export async function fetchRetry(url, {
         headers: { 'user-agent': UA, ...(opts.headers || {}) },
       });
       if (res.status !== 429 && res.status < 500) return res;
-      lastErr = new Error(`HTTP ${res.status} en ${url}`);
+      lastErr = new Error(`HTTP ${res.status} en ${sinClave(url)}`);
     } catch (err) {
       lastErr = err;
     } finally {
       clearTimeout(timer);
     }
   }
-  throw lastErr || new Error(`fetch falló: ${url}`);
+  throw lastErr || new Error(`fetch falló: ${sinClave(url)}`);
 }
 
 export async function fetchJson(url, opts) {
   const res = await fetchRetry(url, opts);
-  if (!res.ok) throw new Error(`HTTP ${res.status} en ${url}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} en ${sinClave(url)}`);
   return res.json();
 }
 
@@ -89,6 +89,14 @@ export function normalizeOrigin(input) {
  * pero se imprime en el informe como fuente de cada comprobación, y un
  * prospecto técnico la lee como descuido.
  */
+/* Los mensajes de error llevan la URL, y la de PSI lleva la API key en la
+   query. El repositorio es público, y los logs de Actions de un repositorio
+   público también: sin esto, el lote nocturno publicaría la clave en cuanto
+   PSI devolviera un 500. */
+export function sinClave(url) {
+  return String(url).replace(/([?&]key=)[^&#]+/gi, '$1***');
+}
+
 export function unirUrl(base, ruta) {
   return new URL(ruta, base).href;
 }
