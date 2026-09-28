@@ -8,6 +8,7 @@
    Por eso IBM Plex se pide pero no se descarga: si el cliente la tiene
    instalada, la usa; si no, cae a la del sistema. Cero red. */
 
+import { fallasCampo } from '../src/cwv.js';
 import { fmt, num, calcularPerdida } from '../src/money.js';
 
 const T = {
@@ -20,6 +21,9 @@ const T = {
     perMonth: '/month',
     assumptions: 'Assumptions',
     source: 'Source',
+    cwvFailed: 'Core Web Vitals, real users on phones: failed',
+    cwvUnit: 'p75 · CrUX',
+    cwvNoMoney: 'Your real-user LCP passes, so there is no revenue figure: the only published coefficient is for load time, and INP or layout shift have none. Rather than invent one, this shows what fails.',
     basisField: 'Calculated on the LCP your real visitors get',
     basisLab: 'Calculated on the lab LCP: no real-user data exists for this store',
     lcpLab: 'LCP · lab',
@@ -70,6 +74,9 @@ const T = {
     perMonth: '/mes',
     assumptions: 'Supuestos',
     source: 'Fuente',
+    cwvFailed: 'Core Web Vitals, usuarios reales en móvil: no aprueba',
+    cwvUnit: 'p75 · CrUX',
+    cwvNoMoney: 'Tu LCP con usuarios reales aprueba, así que no hay cifra de facturación: el único coeficiente publicado es para el tiempo de carga, y ni el INP ni el desplazamiento de diseño tienen uno. En vez de inventarlo, aquí está lo que falla.',
     basisField: 'Calculado sobre el LCP que ven tus visitantes reales',
     basisLab: 'Calculado sobre el LCP de laboratorio: no hay datos de usuarios reales de esta tienda',
     lcpLab: 'LCP · laboratorio',
@@ -200,6 +207,15 @@ function seccionTitular(datos, a, t, movil, dinero, locale) {
   /* Sin facturación conocida no se inventa un importe: se muestra el %.
      Y sin LCP medido no se muestra ninguna de las dos cosas: una raya dice
      la verdad, un "0 %" tranquiliza y miente. */
+  /* Usuarios reales con el LCP en «good» pero INP o CLS fallando: un «0 %»
+     de titular diría «no pasa nada» a una tienda que PageSpeed marca en
+     rojo. Se enseña lo que falla, y se dice por qué no hay dinero. */
+  const cwv = fallasCampo(datos.campo);
+  const soloCwv = importe == null && pct === 0 && dinero.base === 'campo' && cwv?.fallas.length;
+  if (soloCwv) {
+    return seccionTitularCwv(datos, a, t, movil, dinero, cwv);
+  }
+
   const cifra = importe != null
     ? `${fmt(importe, coste.moneda || dinero.moneda, locale)}<span class="unit">${esc(t.perMonth)}</span>`
     : pct != null
@@ -237,6 +253,30 @@ function seccionTitular(datos, a, t, movil, dinero, locale) {
       <ul>${(coste.supuestos || dinero.supuestos).map(s => `<li>${esc(s)}</li>`).join('')}</ul>
       <p class="prov">${esc(coste.fuente || dinero.fuente)}</p>
     </details>
+  </section>`;
+}
+
+function seccionTitularCwv(datos, a, t, movil, dinero, cwv) {
+  return `
+  <section class="hero">
+    <h2 class="diag">${esc(a.diagnostico_una_linea)}</h2>
+    <div class="lbl">${esc(t.cwvFailed)}</div>
+    <div class="bignum">${cwv.fallas.map(f => esc(f.texto)).join(' · ')}<span class="unit">${esc(t.cwvUnit)}</span></div>
+    <div class="prov">${esc(cwv.fuente || '')} · ${esc(cwv.fecha || '')}</div>
+    <p class="prov">${esc(t.cwvNoMoney)}</p>
+
+    <div class="vitals">
+      ${vital('PageSpeed', movil.score, null, estadoScore(movil.score))}
+      ${vital(t.lcpField, dinero.lcp_s, 's', estadoLcp(dinero.lcp_s))}
+      ${vital(t.lcpLab, movil.metricas.lcp_s, 's', estadoLcp(movil.metricas.lcp_s))}
+      ${vital('TBT', movil.metricas.tbt_ms, 'ms', umbral(movil.metricas.tbt_ms, 200, 600))}
+    </div>
+
+    <div class="prov">
+      ${esc(t.source)}: ${esc(movil.fuente)}${movil.version_lighthouse ? ` v${esc(movil.version_lighthouse)}` : ''} · ${esc(movil.fecha)}
+      ${movil.url_analizada ? ` · ${esc(t.analysed)}: ${esc(movil.url_analizada)}` : ''}
+      ${movil.corridas?.length > 1 ? ` · ${esc(medianaTexto(movil, t))}` : ''}
+    </div>
   </section>`;
 }
 

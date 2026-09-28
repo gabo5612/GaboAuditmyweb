@@ -30,10 +30,15 @@ async function psiConLcp(lcpMs) {
   return p;
 }
 
-async function crux(lcpUltimoMs) {
+async function crux(lcpUltimoMs, { inp, cls } = {}) {
   const c = await leer('crux-history.json');
-  const s = c.record.metrics.largest_contentful_paint.percentilesTimeseries.p75s;
-  s[s.length - 1] = lcpUltimoMs;
+  const fijar = (k, v) => {
+    const s = c.record.metrics[k].percentilesTimeseries.p75s;
+    s[s.length - 1] = v;
+  };
+  fijar('largest_contentful_paint', lcpUltimoMs);
+  if (inp != null) fijar('interaction_to_next_paint', inp);
+  if (cls != null) fijar('cumulative_layout_shift', cls);
   return c;
 }
 
@@ -49,8 +54,8 @@ function rutas(psi, cuerpoCrux) {
   ];
 }
 
-async function correr(lcpLabMs, lcpCampoMs) {
-  activo = interceptarFetch(rutas(await psiConLcp(lcpLabMs), lcpCampoMs == null ? null : await crux(lcpCampoMs)));
+async function correr(lcpLabMs, lcpCampoMs, otras) {
+  activo = interceptarFetch(rutas(await psiConLcp(lcpLabMs), lcpCampoMs == null ? null : await crux(lcpCampoMs, otras)));
   const callar = silenciar();
   try { return await auditar('tienda.test'); } finally { callar(); }
 }
@@ -82,12 +87,22 @@ test('la moneda de la pérdida es la de la tienda, no EUR por defecto', async ()
   assert.equal(r.dinero.moneda, 'USD');
 });
 
-test('el asunto del correo usa el mismo LCP que la pérdida', async () => {
+const INF = { informe: 'https://gaboauditmyweb.dev/audit/' + 'a'.repeat(32), para: 'a@b.com' };
+
+test('con usuarios reales fallando, el correo dice qué falla y cómo comprobarlo', async () => {
   const r = await correr(12870, 4800);
   r.rendimiento.movil.score = 40;
-  const [uno] = borradores(r, { informe: 'https://gaboauditmyweb.dev/audit/' + 'a'.repeat(32), para: 'a@b.com' });
-  assert.match(uno.texto, /takes 4s/, 'el de campo (4,8 s), no el de laboratorio (12,9 s)');
-  assert.match(uno.texto, /real visitors/);
+  const [uno] = borradores(r, INF);
+  assert.match(uno.texto, /asunto: tienda\.test fails Core Web Vitals on mobile/);
+  assert.match(uno.texto, /longer than 4\.8s/, 'la cifra de campo, no los 12,9 s de laboratorio');
+  assert.doesNotMatch(uno.texto, /12\.9|12s/);
+  assert.match(uno.texto, /pagespeed\.web\.dev/);
+});
+
+test('una tienda que aprueba con usuarios reales no recibe correo de velocidad', async () => {
+  const r = await correr(12870, 1933, { inp: 168, cls: '0.01' });   // NaturVet, 28 sep
+  r.rendimiento.movil.score = 37;
+  assert.throws(() => borradores(r, INF), /aprueba Core Web Vitals/);
 });
 
 test('el informe dice sobre qué LCP se calculó, y enseña los dos', async () => {
@@ -101,4 +116,17 @@ test('el informe dice sobre qué LCP se calculó, y enseña los dos', async () =
   assert.match(html, /LCP your real visitors get/);
   assert.match(html, /LCP · real users/);
   assert.match(html, /LCP · lab/);
+});
+
+test('LCP real en «good» con INP fallando: el titular enseña el INP, no un 0 %', async () => {
+  const r = await correr(9000, 1800, { inp: 322, cls: '0.01' });
+  const html = renderInforme(r, {
+    idioma: 'en', diagnostico_una_linea: 'x',
+    coste_estimado_mensual: { supuestos: [], fuente: 'x' },
+    hallazgos: [], plan_3_semanas: [], quick_win_regalado: { titulo: 'x', pasos: [], mejora_estimada: 'x', requiere_dev: false },
+    confianza: 'media', datos_faltantes: [],
+  }, {});
+  assert.match(html, /INP 322 ms/);
+  assert.match(html, /Core Web Vitals, real users on phones: failed/);
+  assert.doesNotMatch(html, /0%<span class="unit">of monthly revenue/);
 });

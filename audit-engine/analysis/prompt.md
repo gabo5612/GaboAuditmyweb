@@ -38,6 +38,15 @@ código. Sin explicaciones.
    que arreglar. Un "tu tienda va bien" honesto gana más respeto que un
    informe inflado, y ese contacto te recuerda cuando algo sí se rompa.
 
+7. **Usuarios reales antes que laboratorio.** Si `campo.disponible`, el
+   titular y el diagnóstico se anclan en lo que falla de Core Web Vitals con
+   usuarios reales (p75 de CrUX: LCP > 2,5 s, INP > 200 ms, CLS > 0,1). El
+   LCP de laboratorio explica el *porqué*, nunca es «lo que ven tus
+   clientes». `coste_estimado_mensual.porcentaje` es `dinero.perdida_pct`
+   tal cual — ya está calculado sobre el campo cuando `dinero.base` es
+   `campo`. Si es 0 porque el LCP real aprueba, no busques otra cifra de
+   dinero: INP y CLS no tienen coeficiente publicado.
+
 ### Reglas de redacción
 
 - `idioma`: el del cliente. Deduce por `tienda.moneda_activa` y el dominio

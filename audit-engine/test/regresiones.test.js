@@ -271,10 +271,10 @@ describe('detección de apps', () => {
 describe('bin/batch.js', () => {
   test('--seo es una bandera y no se come el argumento siguiente', async () => {
     const fuente = await readFile(join(raiz, 'bin', 'batch.js'), 'utf8');
-    const cuerpo = fuente.slice(fuente.indexOf('const BANDERAS'));
-    const parseArgs = new Function(`${cuerpo.split('function parseArgs')[0]}
-      ${'function parseArgs' + cuerpo.split('function parseArgs')[1]}
-      return parseArgs;`)();
+    // Desde la función, no desde BANDERAS: BANDERAS vive dentro de ella para
+    // no caer en la zona muerta temporal (ver bin.test.js).
+    const cuerpo = fuente.slice(fuente.indexOf('function parseArgs'));
+    const parseArgs = new Function(`${cuerpo}\n      return parseArgs;`)();
 
     const a = parseArgs(['queue.csv', '--out', 'auditorias/', '--seo']);
     assert.equal(a.seo, true, '--seo al final se ignoraba por completo');

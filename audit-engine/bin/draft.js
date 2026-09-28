@@ -22,35 +22,62 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fallasCampo } from '../src/cwv.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CAL = 'https://cal.com/gabriel-arias-dev/audit';
+
+/* Qué significa cada fallo para quien compra, en una frase. Sin cifras
+   nuevas: sólo el valor medido y el umbral de Google. */
+const QUE_SIGNIFICA = {
+  LCP: f => `the main content takes longer than ${(f.valor / 1000).toFixed(1)}s to appear for 1 in 4 of your mobile visitors (Google's "good" line is 2.5s)`,
+  INP: f => `for 1 in 4 of your mobile visitors, a tap takes more than ${Math.round(f.valor)} ms to visibly respond (Google's "good" line is 200 ms), which is when "Add to cart" gets tapped twice or abandoned`,
+  CLS: f => `the page jumps around while it loads (layout shift ${f.valor.toFixed(2)}, Google's "good" line is 0.1), so people tap the wrong thing`,
+};
 
 export function borradores(datos, { informe, para, nombre = '', loom = null, sinLoom = false }) {
   const host = datos.tienda.host.replace(/^www\./, '');
   const movil = datos.rendimiento.movil;
   const score = movil.score;
-  /* El asunto usa el mismo LCP que la pérdida: el de usuarios reales si
-     existe. Un asunto con el de laboratorio lo desmiente PageSpeed en la
-     primera pantalla, que es la que abre el prospecto. */
-  const lcp = datos.dinero?.base === 'campo' ? datos.dinero.lcp_s : movil.metricas.lcp_s;
-  if (!Number.isFinite(lcp) || !Number.isFinite(score)) throw new Error('la auditoría no tiene score o LCP móvil');
+  if (!Number.isFinite(score)) throw new Error('la auditoría no tiene score móvil');
   if (score > 75) throw new Error(`score móvil ${score}: por encima de 75 hay poco que vender, y un correo de "tu tienda es lenta" sería falso`);
-  const n = Math.floor(lcp);
-  if (n < 3) throw new Error(`LCP de ${lcp} s: un asunto de "${n}s" no duele`);
 
   const hola = nombre ? `Hi ${nombre},` : 'Hi,';
   const lineaLoom = sinLoom ? null : `Three minutes walking through what's causing it: ${loom || '{loom}'}`;
   const cab = (paso, asunto) =>
     `---\npara: ${para}\nasunto: ${asunto}\nhost: ${host}\npaso: ${paso}\naprobado: no\n---\n`;
-  const asunto1 = `${host} takes ${n}s to show anything on mobile`;
+
+  /* Con dato de usuarios reales el gancho es lo que PageSpeed enseña arriba
+     del todo: Core Web Vitals aprobado o no. Si aprueba, no hay correo de
+     velocidad — el laboratorio sólo, contra un campo en verde, es el correo
+     que el prospecto desmiente en un clic (NaturVet, 28 sep 2026). */
+  const campo = fallasCampo(datos.campo);
+  let asunto1, apertura;
+  if (campo) {
+    if (!campo.fallas.length) {
+      throw new Error('aprueba Core Web Vitals con usuarios reales: no es un prospecto de velocidad');
+    }
+    asunto1 = `${host} fails Core Web Vitals on mobile`;
+    const frases = campo.fallas.map(f => QUE_SIGNIFICA[f.metrica](f));
+    apertura = [
+      `I looked at ${host} in Google's own field data: the Chrome UX Report, which is real shoppers on phones over the last 28 days. Your store fails Core Web Vitals on mobile: ${frases.join('; and ')}.`,
+      '', `You can check it yourself in a minute: open pagespeed.web.dev, paste ${host}, and look at the first box, "Discover what your real users are experiencing" (switch it to Origin).`,
+    ];
+  } else {
+    const lcp = movil.metricas.lcp_s;
+    if (!Number.isFinite(lcp)) throw new Error('la auditoría no tiene LCP móvil');
+    const n = Math.floor(lcp);
+    if (n < 3) throw new Error(`LCP de ${lcp} s: un asunto de "${n}s" no duele`);
+    asunto1 = `${host} takes ${n}s to show anything on mobile`;
+    apertura = [`I ran PageSpeed against ${host} this week. Mobile score ${score}, and in the mobile test the largest element paints at around ${n} seconds — your customer is looking at a mostly empty screen for most of that. (Google has no real-user data for your store yet, so this is the lab test.)`];
+  }
 
   const uno = [
     hola, '',
-    `I ran PageSpeed against ${host} this week. Mobile score ${score}, and ${datos.dinero?.base === 'campo' ? 'for your real visitors on phones' : 'in the mobile test'} the largest element paints at around ${n} seconds — your customer is looking at a mostly empty screen for most of that.`,
+    ...apertura,
     ...(lineaLoom ? ['', lineaLoom] : []),
     '', `Full audit here, free, yours to keep whatever you do next: ${informe}`,
-    '', 'There is one fix in there you can apply today without a developer, in about ten minutes. No reply needed for that one — just take it.',
+    '', 'There is one fix in there you can apply today without a developer. No reply needed for that one — just take it.',
     '', `If you want the rest of it done, I run 30-day sprints for Shopify stores: PageSpeed 85+ or full refund, fixed scope, fixed price. Twenty minutes if it is useful: ${CAL}`,
     '', '— Gabriel Arias',
   ].join('\n');
