@@ -189,9 +189,11 @@ const campo = v => {
    siguiente. `--out auditorias/ --seo` dejaba seo sin definir y corría la
    auditoría de velocidad sobre toda la cola —quemando cuota de PSI—, y
    `--seo --out x` se tragaba el `--out` y escribía en la carpeta por defecto. */
-const BANDERAS = new Set(['seo', 'help']);
 
 function parseArgs(argv) {
+  // Dentro de la función: una const de módulo declarada debajo de la llamada
+  // de la línea 24 está en su zona muerta temporal y el lote no arranca.
+  const BANDERAS = new Set(['seo', 'help']);
   const out = { _: [] };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
