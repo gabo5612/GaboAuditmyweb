@@ -17,3 +17,16 @@ for (const f of readdirSync(bin).filter(f => f.endsWith('.js'))) {
     assert.doesNotMatch(salida, /ReferenceError|SyntaxError|TypeError|Cannot find module/, salida);
   });
 }
+
+/* --help sale antes del resumen, así que no ve lo que hay debajo. Una cola
+   con un dominio que no resuelve recorre el lote entero hasta resumen.csv
+   sin gastar cuota: el modo SEO no llama a PSI. */
+test('bin/batch.js llega hasta el resumen', async () => {
+  const { mkdtempSync, writeFileSync, existsSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const dir = mkdtempSync(tmpdir() + '/lote-');
+  writeFileSync(dir + '/cola.csv', 'url,email\nno-existe.invalid,a@b.com\n');
+  const r = spawnSync(process.execPath, [bin + 'batch.js', dir + '/cola.csv', '--seo', '--out', dir + '/out'], { encoding: 'utf8', timeout: 60000 });
+  assert.doesNotMatch(r.stdout + r.stderr, /ReferenceError|TypeError/, r.stderr);
+  assert.ok(existsSync(dir + '/out/resumen-seo.csv'), 'escribió resumen-seo.csv');
+});

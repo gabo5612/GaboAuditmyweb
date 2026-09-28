@@ -180,10 +180,13 @@ function partirLinea(linea) {
   return celdas;
 }
 
-const campo = v => {
+/* Declaración de función, no `const`: el resumen la usa más arriba, y una
+   const ahí está en su zona muerta — el lote auditaba las 60 tiendas y se
+   caía al escribir resumen.csv. */
+function campo(v) {
   const s = String(v ?? '');
   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
+}
 
 /* Las banderas sin valor van declaradas: si no, `--seo` se come el argumento
    siguiente. `--out auditorias/ --seo` dejaba seo sin definir y corría la
