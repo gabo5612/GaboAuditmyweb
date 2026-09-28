@@ -93,7 +93,7 @@ function extraerRecursos(html, base) {
  * se muestra. Eso necesita renderizar la página, así que se toma de la
  * oportunidad `uses-responsive-images` de Lighthouse en vez de estimarlo.
  */
-function analizarImagenes(html) {
+export function analizarImagenes(html) {
   const tags = html.match(RE_IMG) || [];
   const total = tags.length;
   let sin_lazy = 0, sin_formato_moderno = 0, sin_srcset = 0, sin_dimensiones = 0;
@@ -115,7 +115,12 @@ function analizarImagenes(html) {
       sin_lazy++;
       if (ejemplos_sin_lazy.length < 5 && src) ejemplos_sin_lazy.push(src);
     }
-    if (src && !/\.(webp|avif)(\?|$)/i.test(src) && /\.(jpe?g|png)(\?|$)/i.test(src)) sin_formato_moderno++;
+    /* El CDN de Shopify negocia el formato: el mismo «.jpg» llega como WebP a
+       un navegador que lo acepta (comprobado el 28 sep 2026 con Accept:
+       image/webp). Contarlo daría «147 de 150 sin formato moderno» a una
+       tienda que ya los sirve modernos. */
+    const cdnShopify = /(^|\/\/)(cdn\.shopify\.com\/|[^/]+\/cdn\/shop\/)|^\/cdn\/shop\//i.test(src || '');
+    if (src && !cdnShopify && !/\.(webp|avif)(\?|$)/i.test(src) && /\.(jpe?g|png)(\?|$)/i.test(src)) sin_formato_moderno++;
     if (!srcset) sin_srcset++;
     if (!w || !h) sin_dimensiones++; // sin dimensiones declaradas → CLS
   });

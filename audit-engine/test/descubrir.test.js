@@ -108,3 +108,14 @@ test('la tarjeta regalo no se toma como muestra de producto', async () => {
   callar();
   assert.equal(r.producto, 'https://tienda.test/products/mug');
 });
+
+import { analizarImagenes } from '../src/page.js';
+
+test('imágenes del CDN de Shopify no cuentan como «sin formato moderno»: las negocia a WebP', () => {
+  const r = analizarImagenes(
+    '<img src="//www.rumpl.com/cdn/shop/files/hero.jpg?width=800">'
+    + '<img src="https://cdn.shopify.com/s/files/1/x.png">'
+    + '<img src="/cdn/shop/files/y.jpg">'
+    + '<img src="https://otro-cdn.com/z.jpg">');
+  assert.equal(r.sin_formato_moderno, 1, 'sólo la de fuera de Shopify');
+});
