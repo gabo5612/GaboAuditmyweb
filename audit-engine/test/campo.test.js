@@ -130,3 +130,42 @@ test('LCP real en «good» con INP fallando: el titular enseña el INP, no un 0 
   assert.match(html, /Core Web Vitals, real users on phones: failed/);
   assert.doesNotMatch(html, /0%<span class="unit">of monthly revenue/);
 });
+
+test('una tienda cerrada con contraseña no se audita (westernrise.com, 28 sep)', async () => {
+  const html = '<html><head><script>Shopify.theme={"name":"Wind down: Store closed"}</script></head><body></body></html>';
+  activo = interceptarFetch([
+    ['pagespeedonline', respuesta(await psiConLcp(9300))],
+    ['tienda.test', respuesta(html, { url: 'https://tienda.test/password', headers: { 'x-shopid': '9' } })],
+  ]);
+  const callar = silenciar();
+  const r = await auditar('tienda.test');
+  callar();
+  assert.equal(r.estado, 'fallida');
+  assert.match(r.motivo, /password/);
+});
+
+test('cada competidor trae también su dato de usuarios reales', async () => {
+  activo = interceptarFetch(rutas(await psiConLcp(7000), await crux(2860, { inp: 138, cls: '0.03' })));
+  const callar = silenciar();
+  const r = await auditar('tienda.test', { competidores: ['rival.test'] });
+  callar();
+  assert.equal(r.competencia.length, 1);
+  assert.equal(r.competencia[0].campo.lcp_s, 2.86);
+  assert.equal(r.competencia[0].campo.aprueba_cwv, false);
+});
+
+test('la comparativa es campo contra campo cuando todos lo tienen', async () => {
+  activo = interceptarFetch(rutas(await psiConLcp(7000), await crux(2860, { inp: 138, cls: '0.03' })));
+  const callar = silenciar();
+  const r = await auditar('tienda.test', { competidores: ['rival.test'] });
+  callar();
+  r.competencia[0].campo.lcp_s = 2.0;
+  const html = renderInforme(r, {
+    idioma: 'en', diagnostico_una_linea: 'x', coste_estimado_mensual: { supuestos: [], fuente: 'x' },
+    hallazgos: [], plan_3_semanas: [], quick_win_regalado: { titulo: 'x', pasos: [], mejora_estimada: 'x', requiere_dev: false },
+    confianza: 'media', datos_faltantes: [],
+  }, {});
+  assert.match(html, /Real shoppers on phones, last 28 days/);
+  assert.match(html, />2\.86s</);
+  assert.match(html, />2s</);
+});

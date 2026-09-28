@@ -198,6 +198,12 @@ const buscarTipo = (jsonLd, tipo) =>
 export function pareceEscaparate(meta, urlFinal) {
   const host = (() => { try { return new URL(urlFinal).hostname; } catch { return ''; } })();
 
+  /* Una tienda cerrada redirige a /password (westernrise.com, 28 sep 2026:
+     tema «Wind down: Store closed»). Auditarla es auditar una pantalla de
+     contraseña, y escribirle es escribirle a un negocio que ya no vende. */
+  if (/^\/password\/?$/i.test((() => { try { return new URL(urlFinal).pathname; } catch { return ''; } })())) {
+    return { ok: false, motivo: `${host} redirige a /password: la tienda está cerrada al público` };
+  }
   if (/(^|\.)checkout\./i.test(host)) {
     return { ok: false, motivo: `la cadena de redirecciones acaba en ${host}, que es el checkout de Shopify y no el escaparate` };
   }

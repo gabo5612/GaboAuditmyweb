@@ -4,6 +4,8 @@
    fecha. La prosa la escribe la etapa ③ a partir de esto, y sólo puede
    usar números que aparezcan en esta salida. */
 
+import { pareceEscaparate } from './seo.js';
+import { fallasCampo } from './cwv.js';
 import { normalizeOrigin, hostOf, today, log, sleep } from './util.js';
 import { runPsi, elegirMediana } from './psi.js';
 import { runCrux } from './crux.js';
@@ -60,6 +62,12 @@ export async function auditar(entrada, opciones = {}) {
     // Validación §① punto 2. Respuesta honesta: sólo audito Shopify.
     return fallida(origin, host, 'no es una tienda Shopify', 'no_shopify');
   }
+
+  /* Las dos puertas de pareceEscaparate que dependen de la URL y no del
+     HTML: una tienda cerrada (/password) o una cadena que acaba en el
+     checkout. westernrise.com (28 sep) se midió entera sobre /password. */
+  const escaparate = pareceEscaparate({ title: 'x', h1: 1 }, home.final_url || infra.url_final || origin);
+  if (!escaparate.ok) return fallida(origin, host, escaparate.motivo, 'no_escaparate');
 
   // ── Estructura: home + ficha de producto + colección ──────────────
   const { producto, coleccion } = await descubrirPaginas(infra.url_final || origin, home.html);
@@ -129,10 +137,30 @@ export async function auditar(entrada, opciones = {}) {
       const co = normalizeOrigin(url);
       log(`  · competidor: ${hostOf(co)}`);
       const psi = await runPsi(co, 'mobile');
+      /* También sus usuarios reales: la comparación que cuenta es campo
+         contra campo. Un laboratorio de una corrida contra la mediana de
+         tres del prospecto no es «mismo test, mismo día». */
+      let campo = null;
+      for (const o of [co, co.replace('://www.', '://'), co.replace('://', '://www.')]) {
+        try {
+          const c = await runCrux(o, 'PHONE');
+          const f = fallasCampo(c);
+          if (f) {
+            const u = k => c.series?.[k]?.ultimo ?? null;
+            campo = {
+              lcp_s: u('largest_contentful_paint') != null ? Math.round(u('largest_contentful_paint') / 10) / 100 : null,
+              inp_ms: u('interaction_to_next_paint'), cls: u('cumulative_layout_shift') != null ? Number(u('cumulative_layout_shift')) : null,
+              aprueba_cwv: f.fallas.length === 0, fuente: c.fuente, fecha: c.fecha,
+            };
+            break;
+          }
+        } catch { /* sin CrUX para este origen: se prueba la otra forma */ }
+      }
       competencia.push({
         host: hostOf(co), url: co,
         score: psi.score, lcp_s: psi.metricas.lcp_s, cls: psi.metricas.cls,
         fuente: psi.fuente, fecha: psi.fecha,
+        campo,
       });
     } catch (err) {
       log(`    ! falló: ${err.message}`);

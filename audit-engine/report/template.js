@@ -30,6 +30,7 @@ const T = {
     lcpField: 'LCP · real users',
     vsCompetitors: 'You against your competitors',
     vsIntro: 'Same test, same day, same connection. Mobile largest contentful paint.',
+    vsIntroField: 'Real shoppers on phones, last 28 days, the same Google dataset for all three. Largest contentful paint, 75th percentile.',
     you: 'You',
     findings: 'What I found',
     findingsIntro: 'Five things, ordered by what they cost you. Not by what is easy to fix.',
@@ -83,6 +84,7 @@ const T = {
     lcpField: 'LCP · usuarios reales',
     vsCompetitors: 'Tú frente a tu competencia',
     vsIntro: 'Mismo test, mismo día, misma conexión. Largest contentful paint en móvil.',
+    vsIntroField: 'Compradores reales en móvil, últimos 28 días, el mismo conjunto de datos de Google para los tres. Largest contentful paint, percentil 75.',
     you: 'Tú',
     findings: 'Lo que he encontrado',
     findingsIntro: 'Cinco cosas, ordenadas por lo que te cuestan. No por lo fácil que son de arreglar.',
@@ -298,17 +300,21 @@ const umbral = (v, bien, regular) =>
 /* ── 2. La comparativa ───────────────────────────────────────────── */
 function seccionCompetencia(datos, t) {
   if (!datos.competencia?.length) return '';
-  const tu = datos.rendimiento.movil.metricas.lcp_s;
+  /* Campo contra campo si todos lo tienen: es lo que viven los compradores
+     de cada tienda y no depende de una corrida de laboratorio. Si falta en
+     alguno, laboratorio para todos — nunca mezclar las dos escalas. */
+  const campo = datos.dinero?.base === 'campo' && datos.competencia.every(c => c.campo?.lcp_s != null);
+  const tu = campo ? datos.dinero.lcp_s : datos.rendimiento.movil.metricas.lcp_s;
   const filas = [
     { host: datos.tienda.host, lcp: tu, score: datos.rendimiento.movil.score, tuyo: true },
-    ...datos.competencia.map(c => ({ host: c.host, lcp: c.lcp_s, score: c.score, tuyo: false })),
+    ...datos.competencia.map(c => ({ host: c.host, lcp: campo ? c.campo.lcp_s : c.lcp_s, score: c.score, tuyo: false })),
   ];
   const max = Math.max(...filas.map(f => f.lcp || 0), 1);
 
   return `
   <section class="sec">
     <h3>${esc(t.vsCompetitors)}</h3>
-    <p class="lede">${esc(t.vsIntro)}</p>
+    <p class="lede">${esc(campo ? t.vsIntroField : t.vsIntro)}</p>
     <div class="bars">
       ${filas.map(f => `
       <div class="row">
@@ -319,7 +325,7 @@ function seccionCompetencia(datos, t) {
         <div class="row__val mono">${f.lcp ?? '—'}s</div>
       </div>`).join('')}
     </div>
-    <p class="prov">${esc(t.source)}: PageSpeed Insights · ${esc(datos.competencia[0].fecha)}</p>
+    <p class="prov">${esc(t.source)}: ${campo ? `${esc(datos.competencia[0].campo.fuente || 'CrUX')} · ${esc(datos.competencia[0].campo.fecha || '')}` : `PageSpeed Insights · ${esc(datos.competencia[0].fecha)}`}</p>
   </section>`;
 }
 
