@@ -204,6 +204,36 @@ gratis en su panel y conviene mirar desde el primer día:
 
 ---
 
+## El flujo, de una tienda al correo enviado
+
+Todo lo que toca datos de prospectos vive en `audit-engine/prospectos/`
+(gitignored). Ninguno de estos pasos envía nada por sí solo salvo el
+último, y ese se niega sin tu firma en el archivo.
+
+```bash
+cd audit-engine
+node bin/audit.js tienda.com --competidores a.com,b.com --out auditorias/   # mediana de 3 corridas
+#   ③ análisis: analysis/prompt.md + el JSON → analisis/tienda.com.analysis.json
+node bin/report.js auditorias/tienda.com.json analisis/tienda.com.analysis.json \
+  --cal https://cal.com/gabriel-arias-dev/audit --out informes/
+node bin/publish.js informes/tienda.com-<token>.html     # → gaboauditmyweb.dev/audit/<token>
+node bin/draft.js auditorias/tienda.com.json --informe <url> --para hello@tienda.com [--loom <url>]
+#   ⑤ revisión humana: abrir el informe, la checklist del README, editar el
+#      borrador si hace falta y cambiar `aprobado: no` → `aprobado: si`
+node bin/send.js prospectos/borradores/tienda.com-1.md
+node bin/send.js --estado                                 # cupo de hoy
+```
+
+Lo que `send.js` hace cumplir sin que haya que acordarse: aprobación en el
+archivo, lista de bajas (`prospectos/bajas.csv`, un email por línea — **quien
+responde "unsubscribe" va ahí el mismo día**), calentamiento 10/15/20 por
+día, sin marcadores `{…}` sin rellenar, dirección postal y baja en el pie
+(`OUTBOUND_DIRECCION`, `OUTBOUND_TELEFONO` en `.env`), `List-Unsubscribe`, y
+`reply-to` a Gmail. El registro queda en `prospectos/enviados.csv`; el paso 2
+se manda al día 4 y el 3 al día 10 **sólo si no hubo respuesta**.
+
+---
+
 ## Orden de ejecución
 
 1. ~~Comprar el dominio~~ ✓ `gaboauditmyweb.dev`
