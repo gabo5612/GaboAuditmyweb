@@ -301,8 +301,17 @@ img,svg{max-width:100%}
   padding:16px var(--gutter);
   display:flex;align-items:center;gap:24px;justify-content:space-between;
 }
-.brand{display:grid;gap:2px;text-decoration:none;color:inherit}
+.brand{
+  display:grid;grid-template-columns:auto 1fr;column-gap:10px;row-gap:2px;
+  align-items:center;text-decoration:none;color:inherit;
+}
+/* The favicon's bolt, as a data: URI so it costs no request. alt="" on
+   purpose: the name sits right next to it, and reading "Gabriel Arias"
+   twice helps nobody. It spans both rows so the role line hiding on a
+   phone does not move it. */
+.brand__mark{grid-row:1 / span 2;display:block;width:28px;height:28px}
 .brand__name{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.brand__name,.brand__role{grid-column:2}
 .brand__role{
   font-family:var(--font-mono);font-size:12px;
   letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);
@@ -1003,13 +1012,21 @@ img,svg{max-width:100%}
   to{opacity:1;transform:none}
 }
 
-@media (prefers-reduced-motion:no-preference){
+/* `.enter` also needs a real pointer, the same gate as the cursor glow.
+   On a phone the first screen is the whole of what PageSpeed films, and
+   a fade from opacity 0 holds every frame of it back by 320–560ms: the
+   median mobile Speed Index sat at 3.8s against a 1.2s LCP, and that gap
+   was the two points between 98 and 100. A phone gets the first screen
+   already painted, which is the point of the site. */
+@media (prefers-reduced-motion:no-preference) and (hover:hover) and (pointer:fine){
   .enter{animation:enter var(--t-enter) var(--ease) both}
   .enter--2{animation-delay:60ms}
   .enter--3{animation-delay:120ms}
   .enter--4{animation-delay:180ms}
   .enter--5{animation-delay:240ms}
+}
 
+@media (prefers-reduced-motion:no-preference){
   @supports (animation-timeline:view()){
     /* A fixed 220px of travel, not a percentage: a percentage of `entry`
        is a percentage of the block's own height, so a tall section would

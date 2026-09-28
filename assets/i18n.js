@@ -6,6 +6,7 @@
    applied on top, keyed by data-i18n attributes, never by class names.
 
    Language is picked in this order:
+     0. the page itself, if build.js wrote it in Spanish (/es/)
      1. ?lang=es|en in the URL
      2. the visitor's previous choice, from localStorage
      3. navigator.languages
@@ -527,6 +528,13 @@
   }
 
   function detect() {
+    /* A page built in another language (/es/, from build.js) already is
+       that language: its URL is the choice, and neither a stored
+       preference nor the browser gets to paint English over it — there is
+       no English dictionary to paint with. */
+    var built = normalise(document.documentElement.lang);
+    if (built && built !== SOURCE) return built;
+
     var params = new URLSearchParams(window.location.search);
     var fromUrl = normalise(params.get('lang'));
     if (fromUrl) return fromUrl;
@@ -641,6 +649,13 @@
     group.addEventListener('click', function (event) {
       var link = event.target.closest('[data-lang]');
       if (!link) return;
+      /* In dist/ the other language is its own URL under /es/: remember the
+         choice and let the link navigate. Only a ?lang= link — the source
+         served as-is — swaps in place. */
+      if (link.getAttribute('href').charAt(0) !== '?') {
+        remember(link.getAttribute('data-lang'));
+        return;
+      }
       event.preventDefault();
       api.set(link.getAttribute('data-lang'));
       var url = new URL(window.location.href);

@@ -1,0 +1,32 @@
+# Gabriel Arias · Shopify performance & technical SEO
+
+> One operator, Shopify only. Two 30-day sprints, sold separately, each with a
+> written guarantee. A free audit on either arrives within 48 hours, in
+> writing, with no call attached.
+
+Every figure on this site is a measurement with a source and a date, or it is
+not published. The site measures itself with the same tools it sells:
+the raw output is in /medicion/.
+
+## Pages
+
+- [Home](https://gaboauditmyweb.dev/): both tracks side by side, what the free audit contains, the process and the FAQ.
+- [Speed sprint](https://gaboauditmyweb.dev/speed.html): Shopify page speed in 30 days. Guarantee: PageSpeed 85+ or full refund. $2,750.
+- [Technical SEO sprint](https://gaboauditmyweb.dev/seo.html): the 22 technical checks that decide whether Google can crawl, index and read a Shopify store. Guarantee: every failed check green, or full refund. Never a promise about positions or traffic. $2,400.
+- Spanish versions: [/es/](https://gaboauditmyweb.dev/es/), [/es/speed.html](https://gaboauditmyweb.dev/es/speed.html), [/es/seo.html](https://gaboauditmyweb.dev/es/seo.html).
+
+## Terms
+
+- The two sprints are never bundled and never discounted together. Run back to back they take 50 days: three weeks of speed, then four of SEO.
+- Retainer after a sprint: $1,500 per month.
+- Prices in USD.
+
+## Measurements of this site
+
+- [Summary](https://gaboauditmyweb.dev/medicion/resumen.json): PageSpeed Insights, median of three runs per strategy, and the SEO check count.
+- [SEO checks](https://gaboauditmyweb.dev/medicion/seo.json): all 22 checks, each with its state, value and source.
+
+## Contact
+
+- Email: gabrielariasdev@gmail.com
+- Booking (optional, after the audit): https://cal.com/gabriel-arias-dev/audit

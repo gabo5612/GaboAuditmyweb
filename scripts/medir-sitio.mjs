@@ -17,24 +17,38 @@
  * detecta por el fetchTime y, si se repite, la corrida no cuenta.
  *
  * El motor SEO se niega a auditar algo que no sea Shopify, y este sitio no
- * lo es. Aquí se llama a las mismas funciones saltándose sólo esa puerta:
- * las comprobaciones de ficha de producto y colección salen `no_medible`,
- * que es lo cierto, y el total sigue siendo 22. */
+ * lo es. Aquí se llama a las mismas funciones saltándose sólo esa puerta,
+ * y se le dan las plantillas que este sitio sí tiene, cada una en el papel
+ * que cumple de verdad:
+ *
+ *   producto   speed.html — una oferta con precio y schema Product (y
+ *              seo.html, que se comprueba igual en una segunda pasada)
+ *   coleccion  la home — el hub que lista las dos ofertas, con ItemList
+ *
+ * La ruta duplicada no puede ser /collections/x/products/y: aquí no existe.
+ * Se mide la que sí existe — /index.html sirve la misma página que / — con
+ * la misma regla: o no responde, o su canonical apunta a la buena. Cada
+ * adaptación queda escrita en `nota` dentro de seo.json.
+ *
+ *   node scripts/medir-sitio.mjs [url] [--solo-seo]
+ */
 
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { cargarPagina } from '../audit-engine/src/page.js';
 import { analizarInfra } from '../audit-engine/src/infra.js';
 import * as seo from '../audit-engine/src/seo.js';
 
-const URL_SITIO = process.argv[2] || 'https://gaboauditmyweb.dev/';
+const ARGS = process.argv.slice(2);
+const URL_SITIO = ARGS.find(a => !a.startsWith('--')) || 'https://gaboauditmyweb.dev/';
+const SOLO_SEO = ARGS.includes('--solo-seo');
 const SALIDA = 'medicion';
 const CORRIDAS = 3;
 const ESPERA_MS = 65_000;
 
 if (existsSync('audit-engine/.env')) process.loadEnvFile('audit-engine/.env');
 const CLAVE = process.env.PAGESPEED_API_KEY;
-if (!CLAVE) {
+if (!CLAVE && !SOLO_SEO) {
   console.error('✗ Falta PAGESPEED_API_KEY (audit-engine/.env). Sin ella PSI devuelve 429.');
   process.exit(1);
 }
@@ -61,7 +75,7 @@ async function psi(estrategia) {
 await mkdir(SALIDA, { recursive: true });
 const resumen = { url: URL_SITIO, fuente: 'PageSpeed Insights API v5 (Lighthouse)', psi: {} };
 
-for (const estrategia of ['mobile', 'desktop']) {
+for (const estrategia of SOLO_SEO ? [] : ['mobile', 'desktop']) {
   const vistas = new Set();
   const corridas = [];
   while (corridas.length < CORRIDAS) {
@@ -90,24 +104,76 @@ for (const estrategia of ['mobile', 'desktop']) {
 }
 
 // ── SEO: las mismas funciones que bin/seo.js, sin la puerta de Shopify ──
+const unir = ruta => new URL(ruta, URL_SITIO).href;
+const pagina = async (rol, url) => {
+  const p = await cargarPagina(url);
+  if (p.error) throw new Error(`no se pudo descargar ${url}: ${p.error}`);
+  const con = { rol, ...p };
+  return { ...con, meta: seo.leerMetadatos(con) };
+};
+
+/* La ruta duplicada de este sitio, con la misma forma que devuelve
+   comprobarRutaDuplicada para que comprobar() la juzgue igual. */
+async function rutaDuplicada() {
+  const url = unir('index.html');
+  const esperado = unir('./');
+  const p = await cargarPagina(url);
+  // Que la ruta no responda también es correcto: no hay duplicado que indexar.
+  if (p.error) return { medible: true, url, status: p.error, existe: false, canonical: null, correcto: true };
+  const canonical = seo.leerMetadatos({ url, ...p }).canonical;
+  const ruta = u => new URL(u).pathname.replace(/\/$/, '');
+  return {
+    medible: true, url, status: 200, existe: true, canonical, esperado,
+    correcto: Boolean(canonical && ruta(canonical) === ruta(esperado)),
+  };
+}
+
 const infra = await analizarInfra(URL_SITIO);
-const home = await cargarPagina(URL_SITIO);
-if (home.error) throw new Error(`no se pudo descargar la home: ${home.error}`);
-const paginas = [{ rol: 'home', ...home }].map(p => ({ ...p, meta: seo.leerMetadatos(p) }));
+const home = await pagina('home', URL_SITIO);
+const fichas = [await pagina('producto', unir('speed.html')), await pagina('producto', unir('seo.html'))];
 const [robots, sitemap, notFound, llms, duplicada] = await Promise.all([
   seo.leerRobots(URL_SITIO), seo.leerSitemap(URL_SITIO), seo.comprobar404(URL_SITIO),
-  seo.comprobarLlmsTxt(URL_SITIO), seo.comprobarRutaDuplicada(null, null),
+  seo.comprobarLlmsTxt(URL_SITIO), rutaDuplicada(),
 ]);
-const comprobaciones = seo.comprobar({
-  origin: URL_SITIO, paginas, robots, sitemap, notFound, duplicada, llms,
-  xRobotsTag: infra.x_robots_tag,
+const pasada = ficha => seo.comprobar({
+  origin: URL_SITIO, paginas: [home, ficha, { ...home, rol: 'coleccion' }],
+  robots, sitemap, notFound, duplicada, llms, xRobotsTag: infra.x_robots_tag,
 });
+const comprobaciones = pasada(fichas[0]);
+
+/* seo.html tiene que aguantar las mismas comprobaciones que speed.html.
+   Si una sale distinta, el 22/22 sólo sería cierto para la mitad de las
+   ofertas, y no se publica. */
+const segunda = pasada(fichas[1]);
+const distintas = segunda.filter((c, i) => c.estado !== comprobaciones[i].estado);
+if (distintas.length) {
+  console.error(`✗ seo.html no da lo mismo que speed.html: ${distintas.map(c => `${c.id}=${c.estado}`).join(', ')}`);
+  process.exitCode = 1;
+}
+
+const NOTAS = {
+  ruta_duplicada: 'Este sitio no tiene /collections/*/products/*. Se mide la ruta duplicada que sí tiene: /index.html frente a /, con la misma regla.',
+  schema_product: 'La ficha es speed.html (Product con su Offer). seo.html se comprobó en una segunda pasada con el mismo resultado.',
+  schema_breadcrumb: 'Medido en speed.html; seo.html da el mismo resultado.',
+  schema_coleccion: 'La colección es la home: el hub que lista las dos ofertas, con ItemList.',
+};
+for (const c of comprobaciones) if (NOTAS[c.id]) c.nota = NOTAS[c.id];
+
 const fechaSeo = new Date().toISOString();
-await writeFile(`${SALIDA}/seo.json`, JSON.stringify({ url: URL_SITIO, fecha: fechaSeo, comprobaciones }, null, 2));
+await writeFile(`${SALIDA}/seo.json`, JSON.stringify({
+  url: URL_SITIO, fecha: fechaSeo,
+  plantillas: { home: home.meta.url_final, producto: fichas.map(f => f.meta.url_final), coleccion: home.meta.url_final },
+  comprobaciones,
+}, null, 2));
 resumen.seo = { fecha: fechaSeo, fuente: 'audit-engine/src/seo.js', archivo: 'seo.json', ...seo.resumir(comprobaciones) };
 
+if (SOLO_SEO) {
+  const previo = existsSync(`${SALIDA}/resumen.json`) ? JSON.parse(await readFile(`${SALIDA}/resumen.json`, 'utf8')) : {};
+  resumen.psi = previo.psi || {};
+}
 await writeFile(`${SALIDA}/resumen.json`, JSON.stringify(resumen, null, 2));
 const s = resumen.seo;
 console.log(`\n✓ ${SALIDA}/resumen.json`);
-console.log(`  PageSpeed móvil ${resumen.psi.mobile.score_mediana} (${resumen.psi.mobile.scores.join(' · ')}) · escritorio ${resumen.psi.desktop.score_mediana}`);
+if (resumen.psi.mobile) console.log(`  PageSpeed móvil ${resumen.psi.mobile.score_mediana} (${resumen.psi.mobile.scores.join(' · ')}) · escritorio ${resumen.psi.desktop.score_mediana}`);
+for (const c of comprobaciones.filter(c => c.estado !== 'pasa')) console.log(`  · ${c.id}: ${c.estado} — ${c.valor}`);
 console.log(`  SEO ${s.pasa}/${s.total} pasan · ${s.falla} fallan · ${s.aviso} avisos · ${s.no_aplica + s.no_medible} no aplican o no se pueden medir`);

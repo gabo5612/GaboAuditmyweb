@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://gaboauditmyweb.dev/</loc></url>
-  <url><loc>https://gaboauditmyweb.dev/speed.html</loc></url>
-  <url><loc>https://gaboauditmyweb.dev/seo.html</loc></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://gaboauditmyweb.dev/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gaboauditmyweb.dev/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://gaboauditmyweb.dev/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gaboauditmyweb.dev/"/></url>
+  <url><loc>https://gaboauditmyweb.dev/speed.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gaboauditmyweb.dev/speed.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://gaboauditmyweb.dev/es/speed.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gaboauditmyweb.dev/speed.html"/></url>
+  <url><loc>https://gaboauditmyweb.dev/seo.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gaboauditmyweb.dev/seo.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://gaboauditmyweb.dev/es/seo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gaboauditmyweb.dev/seo.html"/></url>
+  <url><loc>https://gaboauditmyweb.dev/es/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gaboauditmyweb.dev/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://gaboauditmyweb.dev/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gaboauditmyweb.dev/"/></url>
+  <url><loc>https://gaboauditmyweb.dev/es/speed.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gaboauditmyweb.dev/speed.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://gaboauditmyweb.dev/es/speed.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gaboauditmyweb.dev/speed.html"/></url>
+  <url><loc>https://gaboauditmyweb.dev/es/seo.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gaboauditmyweb.dev/seo.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://gaboauditmyweb.dev/es/seo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gaboauditmyweb.dev/seo.html"/></url>
 </urlset>
