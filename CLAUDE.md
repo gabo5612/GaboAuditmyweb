@@ -115,8 +115,10 @@ and parse before the first request to `fonts.gstatic.com` can start, and each
 pays its own DNS + TCP + TLS. That chain was blocking first paint by ~800 ms
 on a throttled phone. The fonts now live in `assets/fonts/`, subset to the
 characters these three pages actually use: 55 KB in three files, fewer bytes
-than Google sent and no chain. `sans.woff2` and `mono-400.woff2` are
-preloaded — they are what the first screen needs.
+than Google sent and no chain. All three are preloaded: on a phone the gauge
+figures (mono 600) are on the first screen too, and left to the CSS that file
+was discovered last and forced a late relayout that PageSpeed billed to Speed
+Index.
 
 Vercel Web Analytics is the one script that isn't ours, and it does not break
 the rule: `/_vercel/insights/script.js` is served from the site's own origin
@@ -169,9 +171,21 @@ worth keeping in mind:
 Not translated on purpose: the brand name, the plan prices, `Milliseconds
 Make Millions` (a report title), the schema type names a client will see in
 their own HTML (`Product`, `ProductGroup`, `BreadcrumbList`, `ItemList`,
-`Organization`), the check ids, and the mono placeholders. Single URL per
-page, so there are no `hreflang` tags — add them alongside the real domain if
-the Spanish version ever needs to be indexed separately.
+`Organization`), the check ids, and the mono placeholders.
+
+**Spanish is also built statically into `dist/es/`.** `build.js` applies the
+`ES` dictionary to the same markup (text of each `[data-i18n]`, the `-content`
+/ `-aria` / `-href` attributes, `lang`, canonical, `og:url`, `../` on asset
+paths), so every page has an indexable Spanish URL and the three pages carry
+`hreflang` en / es / x-default (the sitemap too). It is not a second source:
+there is nothing under `es/` in the repo. `--check` fails if a key is missing
+from `ES`, if a `data-i18n` element has markup inside (replacing it would
+change the DOM), or if hooks or ids differ between the two languages. On a
+page built in Spanish `i18n.js` takes the language from `<html lang>`; in
+`dist/` the ES switch is a link to `/es/…` and EN is `../page?lang=en`,
+while the source keeps `?lang=` links that swap in place. Why not
+`?lang=es` in hreflang: that URL's canonical is the English page, and Google
+drops an hreflang whose target canonicalises elsewhere.
 
 ## Architecture — audit-engine
 
@@ -268,8 +282,8 @@ The page ships several deliberate empty states, each marked in the UI with an am
 - Case study slot 02 — needs client permission, both captures, and both dates.
 - Client logos column.
 
-FAQ answers are marked `Placeholder.` in their copy and need review before
-launch — except `faq.a2`, which carries the real 50-day answer.
+FAQ answers are published as written (2026-09-28). Payment terms: 50% at
+start, 50% on delivery, full refund if the guarantee is missed.
 
 **Prices are set, in USD.** Speed sprint `$2,750`, SEO sprint `$2,400`,
 retainer `$1,500/mo`. Both tracks back to back are `$5,150` over 50 days —
@@ -296,7 +310,7 @@ Each track has one empty case study slot.
 
 ## The site's own figures
 
-The hero gauges (`98` PageSpeed mobile, `15/22` SEO on 2026-09-28) are real
+The hero gauges (`100` PageSpeed mobile, `22/22` SEO on 2026-09-28) are real
 measurements of the deployed site, not placeholders. `node scripts/medir-sitio.mjs`
 runs PSI three times per strategy against `https://gaboauditmyweb.dev/` and the
 SEO checks through the same `audit-engine/src/seo.js` functions, skipping only
@@ -307,11 +321,23 @@ that folder so every figure links to its source.
   build.** Then the figures are copied by hand into the three pages (EN markup +
   ES keys `dual.*`, `gauge.*`, `se.gauge*`) and the site is redeployed. That
   keeps the build deterministic.
-- **Median of three, range printed.** Mobile swings 98–100 between runs (Speed
-  Index 2.3–4.1 s under emulation, LCP stable at ~1.2 s). PSI serves a cached
-  response for a repeated URL within ~60 s; the script detects the repeated
-  `fetchTime` and does not count it.
-- **`15/22` is 0 failed, not 7 failed.** The other 7 test product/collection
-  pages this site does not have, and the copy says so next to the number.
+- **Median of three, range printed.** Mobile still swings 98–100 between runs;
+  the low ones are a PSI-side delay to first paint with the main thread idle,
+  and the first run after a deploy (cold edge) is the usual one. A single
+  desktop run once scored 90 because PSI's network stalled 10 s on the CSS.
+  PSI serves a cached response for a repeated URL within ~60 s; the script
+  detects the repeated `fetchTime` and does not count it. `--solo-seo` reruns
+  only the checks and keeps the previous PSI block.
+- **How 22/22 maps onto a site that is not a store.** The script hands the
+  engine the templates this site has: `speed.html` as the product page
+  (`Product` + `Offer` + `BreadcrumbList`; `seo.html` is checked in a second
+  pass and must give identical states), the hub as the collection (`ItemList`),
+  and `/index.html` vs `/` as the duplicate route. Each adaptation is written
+  into `nota` in `seo.json`. Schema.org defines `Product` as "any offered
+  product or service", so the two sprints qualify; keep the schema price equal
+  to the plan card.
+- **Two ways to deploy, and they overwrite each other.** A push to `main`
+  triggers the Vercel git build; `vercel --prod` deploys the working tree.
+  Measure only once the live HTML is the version you mean to measure.
 - Re-measure after any change that could move either figure, and update the
   date in the badges.

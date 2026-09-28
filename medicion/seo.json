@@ -1,6 +1,14 @@
 {
   "url": "https://gaboauditmyweb.dev/",
-  "fecha": "2026-09-28T14:52:44.015Z",
+  "fecha": "2026-09-28T15:51:45.503Z",
+  "plantillas": {
+    "home": "https://gaboauditmyweb.dev/",
+    "producto": [
+      "https://gaboauditmyweb.dev/speed.html",
+      "https://gaboauditmyweb.dev/seo.html"
+    ],
+    "coleccion": "https://gaboauditmyweb.dev/"
+  },
   "comprobaciones": [
     {
       "id": "robots_txt",
@@ -9,7 +17,7 @@
       "valor": "72 bytes",
       "evidencia": null,
       "url": null,
-      "fuente": "https://gaboauditmyweb.dev//robots.txt",
+      "fuente": "https://gaboauditmyweb.dev/robots.txt",
       "fecha": "2026-09-28",
       "grupo": "indexabilidad"
     },
@@ -20,7 +28,7 @@
       "valor": "0 reglas Disallow, ninguna sobre el catálogo",
       "evidencia": null,
       "url": null,
-      "fuente": "https://gaboauditmyweb.dev//robots.txt",
+      "fuente": "https://gaboauditmyweb.dev/robots.txt",
       "fecha": "2026-09-28",
       "grupo": "indexabilidad"
     },
@@ -31,7 +39,7 @@
       "valor": "https://gaboauditmyweb.dev/sitemap.xml",
       "evidencia": null,
       "url": null,
-      "fuente": "https://gaboauditmyweb.dev//robots.txt",
+      "fuente": "https://gaboauditmyweb.dev/robots.txt",
       "fecha": "2026-09-28",
       "grupo": "indexabilidad"
     },
@@ -39,10 +47,10 @@
       "id": "sitemap_xml",
       "titulo": "sitemap.xml servido y con secciones",
       "estado": "pasa",
-      "valor": "3 entradas en el índice",
+      "valor": "6 entradas en el índice",
       "evidencia": null,
       "url": null,
-      "fuente": "https://gaboauditmyweb.dev//sitemap.xml",
+      "fuente": "https://gaboauditmyweb.dev/sitemap.xml",
       "fecha": "2026-09-28",
       "grupo": "indexabilidad"
     },
@@ -50,7 +58,7 @@
       "id": "noindex",
       "titulo": "Ninguna plantilla clave está en noindex",
       "estado": "pasa",
-      "valor": "1 páginas comprobadas",
+      "valor": "2 páginas comprobadas",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -63,7 +71,7 @@
       "estado": "pasa",
       "valor": "HTTP 404",
       "evidencia": null,
-      "url": "https://gaboauditmyweb.dev//pagina-inexistente-auditoria-seo-0000",
+      "url": "https://gaboauditmyweb.dev/pagina-inexistente-auditoria-seo-0000",
       "fuente": "código de estado HTTP",
       "fecha": "2026-09-28",
       "grupo": "indexabilidad"
@@ -72,7 +80,7 @@
       "id": "canonical_presente",
       "titulo": "Todas las plantillas declaran canonical",
       "estado": "pasa",
-      "valor": "1 de 1",
+      "valor": "2 de 2",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -83,7 +91,7 @@
       "id": "canonical_autoreferente",
       "titulo": "El canonical apunta a la propia página",
       "estado": "pasa",
-      "valor": "1 comprobados",
+      "valor": "2 comprobados",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -93,19 +101,20 @@
     {
       "id": "ruta_duplicada",
       "titulo": "La ruta /collections/*/products/* no duplica la ficha",
-      "estado": "no_medible",
-      "valor": "no se localizaron a la vez una ficha de producto y una colección públicas",
+      "estado": "pasa",
+      "valor": "canonical → https://gaboauditmyweb.dev/",
       "evidencia": null,
-      "url": null,
+      "url": "https://gaboauditmyweb.dev/index.html",
       "fuente": "HTML servido por la tienda",
       "fecha": "2026-09-28",
-      "grupo": "duplicados"
+      "grupo": "duplicados",
+      "nota": "Este sitio no tiene /collections/*/products/*. Se mide la ruta duplicada que sí tiene: /index.html frente a /, con la misma regla."
     },
     {
       "id": "hreflang",
       "titulo": "hreflang coherente con x-default",
-      "estado": "no_aplica",
-      "valor": "la home no declara versiones alternativas",
+      "estado": "pasa",
+      "valor": "3 versiones, x-default presente",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -116,7 +125,7 @@
       "id": "title_presente",
       "titulo": "Todas las plantillas tienen title",
       "estado": "pasa",
-      "valor": "1 de 1, todos entre 15 y 65 caracteres",
+      "valor": "2 de 2, todos entre 15 y 65 caracteres",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -127,7 +136,7 @@
       "id": "title_unico",
       "titulo": "Cada plantilla tiene un title distinto",
       "estado": "pasa",
-      "valor": "1 títulos distintos",
+      "valor": "2 títulos distintos",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -138,7 +147,7 @@
       "id": "meta_description",
       "titulo": "Todas las plantillas tienen meta description",
       "estado": "pasa",
-      "valor": "1 de 1",
+      "valor": "2 de 2",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -149,7 +158,7 @@
       "id": "h1_unico",
       "titulo": "Un solo h1 por plantilla",
       "estado": "pasa",
-      "valor": "1 de 1",
+      "valor": "2 de 2",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -159,9 +168,9 @@
     {
       "id": "alt_imagenes",
       "titulo": "Las imágenes declaran texto alternativo",
-      "estado": "no_medible",
-      "valor": "ninguna <img> con src en el HTML inicial; el tema las pinta con JS",
-      "evidencia": null,
+      "estado": "pasa",
+      "valor": "0 de 2 imágenes sin atributo alt",
+      "evidencia": "2 más llevan alt vacío, que es lo correcto en una imagen decorativa",
       "url": null,
       "fuente": "HTML servido por la tienda",
       "fecha": "2026-09-28",
@@ -170,24 +179,26 @@
     {
       "id": "schema_product",
       "titulo": "Schema Product completo en la ficha",
-      "estado": "no_medible",
-      "valor": "no se localizó una ficha de producto pública",
+      "estado": "pasa",
+      "valor": "Product con name, image, price, priceCurrency y availability",
       "evidencia": null,
-      "url": null,
+      "url": "https://gaboauditmyweb.dev/speed.html",
       "fuente": "HTML servido por la tienda",
       "fecha": "2026-09-28",
-      "grupo": "enriquecidos"
+      "grupo": "enriquecidos",
+      "nota": "La ficha es speed.html (Product con su Offer). seo.html se comprobó en una segunda pasada con el mismo resultado."
     },
     {
       "id": "schema_breadcrumb",
       "titulo": "BreadcrumbList en la ficha de producto",
-      "estado": "no_medible",
-      "valor": "no se localizó una ficha de producto pública",
+      "estado": "pasa",
+      "valor": "2 niveles",
       "evidencia": null,
-      "url": null,
+      "url": "https://gaboauditmyweb.dev/speed.html",
       "fuente": "HTML servido por la tienda",
       "fecha": "2026-09-28",
-      "grupo": "enriquecidos"
+      "grupo": "enriquecidos",
+      "nota": "Medido en speed.html; seo.html da el mismo resultado."
     },
     {
       "id": "schema_organization",
@@ -203,19 +214,20 @@
     {
       "id": "schema_coleccion",
       "titulo": "ItemList o CollectionPage en la colección",
-      "estado": "no_medible",
-      "valor": "no se localizó una colección pública",
+      "estado": "pasa",
+      "valor": "Organization, ItemList",
       "evidencia": null,
-      "url": null,
+      "url": "https://gaboauditmyweb.dev/",
       "fuente": "HTML servido por la tienda",
       "fecha": "2026-09-28",
-      "grupo": "enriquecidos"
+      "grupo": "enriquecidos",
+      "nota": "La colección es la home: el hub que lista las dos ofertas, con ItemList."
     },
     {
       "id": "open_graph",
       "titulo": "og:title y og:image en las plantillas clave",
       "estado": "pasa",
-      "valor": "1 de 1",
+      "valor": "2 de 2",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -226,7 +238,7 @@
       "id": "json_ld_valido",
       "titulo": "Ningún bloque JSON-LD roto",
       "estado": "pasa",
-      "valor": "1 bloques parseados",
+      "valor": "4 bloques parseados",
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
@@ -236,11 +248,11 @@
     {
       "id": "llms_txt",
       "titulo": "llms.txt para buscadores con IA",
-      "estado": "no_aplica",
-      "valor": "ausente — propuesta emergente, todavía no es un estándar",
+      "estado": "pasa",
+      "valor": "presente",
       "evidencia": null,
-      "url": "https://gaboauditmyweb.dev//llms.txt",
-      "fuente": "https://gaboauditmyweb.dev//llms.txt",
+      "url": "https://gaboauditmyweb.dev/llms.txt",
+      "fuente": "https://gaboauditmyweb.dev/llms.txt",
       "fecha": "2026-09-28",
       "grupo": "enriquecidos"
     }

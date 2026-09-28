@@ -24,12 +24,16 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <!-- Fonts are served from this origin; the @font-face block in styles.css
-     explains why. These two are what the first screen needs: the headline,
-     lede and buttons in sans, the eyebrow and brand role in mono 400.
+     explains why. All three are what the first screen needs: the headline,
+     lede and buttons in sans, the eyebrow and brand role in mono 400, and
+     the gauge figures in mono 600 — on a phone the gauges are on the first
+     screen too, and left to the CSS that file was found last and forced a
+     late relayout that PageSpeed billed to Speed Index.
      Preloading them starts the font download alongside the stylesheet
      instead of waiting for it to arrive and parse first. -->
 <link rel="preload" href="assets/fonts/sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/mono-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
 <!-- Product, not Service: schema.org defines Product as "any offered
      product or service", and it is the type Google reads a price from.
@@ -88,13 +92,13 @@
 
     <div class="card gauge enter enter--3">
       <div class="mono-label gauge__label" data-i18n="gauge.label">This site · PageSpeed mobile</div>
-      <svg class="gauge__dial" width="200" height="200" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="PageSpeed mobile score: 98 out of 100">
+      <svg class="gauge__dial" width="200" height="200" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="PageSpeed mobile score: 100 out of 100">
         <circle cx="64" cy="64" r="54" fill="none" stroke="var(--hairline)" stroke-width="8"></circle>
-        <circle cx="64" cy="64" r="54" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round" stroke-dasharray="332.5 339.3" transform="rotate(-90 64 64)"></circle>
-        <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="48" font-weight="600" fill="#F2F4F5">98</text>
+        <circle cx="64" cy="64" r="54" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round" stroke-dasharray="339.3 339.3" transform="rotate(-90 64 64)"></circle>
+        <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="48" font-weight="600" fill="#F2F4F5">100</text>
       </svg>
       <span class="badge badge--good badge--md" data-i18n="gauge.badge">● Measured 28 Sep 2026</span>
-      <p class="gauge__note"><span data-i18n="gauge.note">Median of three PageSpeed Insights mobile runs: 98 · 98 · 100. Desktop 100 on all three. Lighthouse 13.5.0.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a> · <a class="gauge__raw" href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fgaboauditmyweb.dev%2F" data-i18n="self.rerun">Re-run it yourself</a></p>
+      <p class="gauge__note"><span data-i18n="gauge.note">Median of three PageSpeed Insights mobile runs: 98 · 100 · 100. Desktop 100 on all three. Lighthouse 13.5.0.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a> · <a class="gauge__raw" href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fgaboauditmyweb.dev%2F" data-i18n="self.rerun">Re-run it yourself</a></p>
     </div>
   </section>
 

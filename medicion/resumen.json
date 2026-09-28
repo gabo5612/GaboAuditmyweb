@@ -3,17 +3,17 @@
   "fuente": "PageSpeed Insights API v5 (Lighthouse)",
   "psi": {
     "mobile": {
-      "score_mediana": 98,
+      "score_mediana": 100,
       "scores": [
         98,
-        98,
+        100,
         100
       ],
-      "lcp_ms_mediana": 1235,
+      "lcp_ms_mediana": 1383,
       "fechas": [
-        "2026-09-28T14:47:22.979Z",
-        "2026-09-28T14:48:38.784Z",
-        "2026-09-28T14:49:55.071Z"
+        "2026-09-28T15:46:16.407Z",
+        "2026-09-28T15:47:32.902Z",
+        "2026-09-28T15:48:47.733Z"
       ],
       "lighthouse": "13.5.0",
       "archivos": [
@@ -29,11 +29,11 @@
         100,
         100
       ],
-      "lcp_ms_mediana": 343,
+      "lcp_ms_mediana": 365,
       "fechas": [
-        "2026-09-28T14:50:05.811Z",
-        "2026-09-28T14:51:20.993Z",
-        "2026-09-28T14:52:35.696Z"
+        "2026-09-28T15:48:58.714Z",
+        "2026-09-28T15:50:15.699Z",
+        "2026-09-28T15:51:36.305Z"
       ],
       "lighthouse": "13.5.0",
       "archivos": [
@@ -44,36 +44,52 @@
     }
   },
   "seo": {
-    "fecha": "2026-09-28T14:52:44.015Z",
+    "fecha": "2026-09-28T15:51:45.503Z",
     "fuente": "audit-engine/src/seo.js",
     "archivo": "seo.json",
     "total": 22,
-    "evaluadas": 15,
-    "pasa": 15,
+    "evaluadas": 22,
+    "pasa": 22,
     "falla": 0,
     "aviso": 0,
-    "no_aplica": 2,
-    "no_medible": 5,
+    "no_aplica": 0,
+    "no_medible": 0,
     "por_grupo": {
       "indexabilidad": {
         "total": 6,
+        "pasa": 6,
         "falla": 0,
-        "aviso": 0
+        "aviso": 0,
+        "no_aplica": 0,
+        "no_medible": 0,
+        "evaluadas": 6
       },
       "duplicados": {
         "total": 4,
+        "pasa": 4,
         "falla": 0,
-        "aviso": 0
+        "aviso": 0,
+        "no_aplica": 0,
+        "no_medible": 0,
+        "evaluadas": 4
       },
       "metadatos": {
         "total": 5,
+        "pasa": 5,
         "falla": 0,
-        "aviso": 0
+        "aviso": 0,
+        "no_aplica": 0,
+        "no_medible": 0,
+        "evaluadas": 5
       },
       "enriquecidos": {
         "total": 7,
+        "pasa": 7,
         "falla": 0,
-        "aviso": 0
+        "aviso": 0,
+        "no_aplica": 0,
+        "no_medible": 0,
+        "evaluadas": 7
       }
     },
     "salud_pct": 100

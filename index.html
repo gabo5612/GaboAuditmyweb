@@ -24,12 +24,16 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <!-- Fonts are served from this origin; the @font-face block in styles.css
-     explains why. These two are what the first screen needs: the headline,
-     lede and buttons in sans, the eyebrow and brand role in mono 400.
+     explains why. All three are what the first screen needs: the headline,
+     lede and buttons in sans, the eyebrow and brand role in mono 400, and
+     the gauge figures in mono 600 — on a phone the gauges are on the first
+     screen too, and left to the CSS that file was found last and forced a
+     late relayout that PageSpeed billed to Speed Index.
      Preloading them starts the font download alongside the stylesheet
      instead of waiting for it to arrive and parse first. -->
 <link rel="preload" href="assets/fonts/sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/mono-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"Gabriel Arias","url":"https://gaboauditmyweb.dev/","logo":"https://gaboauditmyweb.dev/assets/og.png","email":"gabrielariasdev@gmail.com","description":"Shopify performance and technical SEO: two 30-day sprints, sold separately, each with a written guarantee.","sameAs":["https://github.com/gabo5612"]},{"@type":"ItemList","name":"Two sprints, sold separately","itemListElement":[{"@type":"ListItem","position":1,"name":"Shopify speed sprint","url":"https://gaboauditmyweb.dev/speed.html"},{"@type":"ListItem","position":2,"name":"Shopify technical SEO sprint","url":"https://gaboauditmyweb.dev/seo.html"}]}]}
@@ -90,21 +94,21 @@
       <div class="mono-label dual__head" data-i18n="dual.label">This site, measured by its own tools</div>
       <div class="dual__grid">
         <div class="dual__cell">
-          <svg class="gauge__dial" width="120" height="120" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="PageSpeed mobile score: 98 out of 100">
+          <svg class="gauge__dial" width="120" height="120" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="PageSpeed mobile score: 100 out of 100">
             <circle cx="64" cy="64" r="54" fill="none" stroke="var(--hairline)" stroke-width="8"></circle>
-            <circle cx="64" cy="64" r="54" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round" stroke-dasharray="332.5 339.3" transform="rotate(-90 64 64)"></circle>
-            <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="44" font-weight="600" fill="#F2F4F5">98</text>
+            <circle cx="64" cy="64" r="54" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round" stroke-dasharray="339.3 339.3" transform="rotate(-90 64 64)"></circle>
+            <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="44" font-weight="600" fill="#F2F4F5">100</text>
           </svg>
           <div class="mono-label" data-i18n="dual.speed">PageSpeed mobile</div>
         </div>
         <div class="dual__cell dual__cell--centred">
-          <div class="dual__score dual__score--measured">15<span class="dual__total">/22</span></div>
+          <div class="dual__score dual__score--measured">22<span class="dual__total">/22</span></div>
           <div class="mono-label" data-i18n="dual.seo">SEO checks passed</div>
         </div>
       </div>
       <div class="dual__foot">
         <span class="badge badge--good badge--md" data-i18n="dual.badge">● Measured 28 Sep 2026</span>
-        <p class="dual__note"><span data-i18n="dual.note">PageSpeed: median of three mobile runs (98 · 98 · 100), Lighthouse 13.5.0. SEO: 0 failed; the other 7 test product and collection pages, which this site does not have.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a></p>
+        <p class="dual__note"><span data-i18n="dual.note">PageSpeed: median of three mobile runs (98 · 100 · 100), desktop 100 on all three, Lighthouse 13.5.0. SEO: all 22 pass, the sprint pages read as product pages and the hub as the listing.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a></p>
       </div>
     </div>
   </section>

@@ -24,12 +24,16 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <!-- Fonts are served from this origin; the @font-face block in styles.css
-     explains why. These two are what the first screen needs: the headline,
-     lede and buttons in sans, the eyebrow and brand role in mono 400.
+     explains why. All three are what the first screen needs: the headline,
+     lede and buttons in sans, the eyebrow and brand role in mono 400, and
+     the gauge figures in mono 600 — on a phone the gauges are on the first
+     screen too, and left to the CSS that file was found last and forced a
+     late relayout that PageSpeed billed to Speed Index.
      Preloading them starts the font download alongside the stylesheet
      instead of waiting for it to arrive and parse first. -->
 <link rel="preload" href="assets/fonts/sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/mono-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
 <!-- Product, not Service: schema.org defines Product as "any offered
      product or service", and it is the type Google reads a price from.
@@ -88,9 +92,9 @@
 
     <div class="card gauge enter enter--3">
       <div class="mono-label gauge__label" data-i18n="se.gaugeLabel">This site · checks passed</div>
-      <div class="score score--measured">15<span class="score__total">/22</span></div>
+      <div class="score score--measured">22<span class="score__total">/22</span></div>
       <span class="badge badge--good badge--md" data-i18n="se.gaugeBadge">● Measured 28 Sep 2026</span>
-      <p class="gauge__note"><span data-i18n="se.gaugeNote">The same 22 checks the free audit runs, against this domain: 0 failed, 0 warnings. The other 7 test product and collection pages, which this site does not have.</span> <a class="gauge__raw" href="medicion/seo.json" data-i18n="self.rawJson">Raw JSON</a></p>
+      <p class="gauge__note"><span data-i18n="se.gaugeNote">The same 22 checks the free audit runs, against this domain: 22 pass, 0 failed, 0 warnings. The two sprint pages stand in for product pages and the hub for the collection.</span> <a class="gauge__raw" href="medicion/seo.json" data-i18n="self.rawJson">Raw JSON</a></p>
     </div>
   </section>
 
