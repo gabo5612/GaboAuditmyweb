@@ -13,10 +13,12 @@ export const sleep = ms => new Promise(r => setTimeout(r, ms));
  * más te interesan". 3 reintentos, y si aun así falla, el llamante marca
  * la auditoría como fallida en vez de enviar un informe con huecos.
  */
-export async function fetchRetry(url, { retries = 3, timeout = 60000, ...opts } = {}) {
-  let lastErr;
+export async function fetchRetry(url, {
+  retries = 3, timeout = 60000, esperaBaseMs = 2000, reintentoTardioMs = null, ...opts
+} = {}) {
+  let lastErr, deRed = false;
   for (let attempt = 0; attempt <= retries; attempt++) {
-    if (attempt > 0) await sleep(2000 * Math.pow(2, attempt - 1)); // 2s, 4s, 8s
+    if (attempt > 0) await sleep(esperaBaseMs * Math.pow(2, attempt - 1)); // 2s, 4s, 8s
 
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), timeout);
@@ -32,6 +34,31 @@ export async function fetchRetry(url, { retries = 3, timeout = 60000, ...opts } 
         continue;
       }
       return res;
+    } catch (err) {
+      lastErr = err;
+      deRed = true;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /* Reintento tardío, sólo para fallos de red (`fetch failed`, socket
+     cerrado), nunca para un 429 o un 5xx: ésos son el servidor diciendo que
+     no, y volver a preguntar medio minuto después no cambia la respuesta.
+     El PSI de escritorio de NaturVet cayó así en 1 de 4 corridas pese a los
+     tres reintentos rápidos: el corte dura más que 2 + 4 + 8 s. */
+  if (deRed && reintentoTardioMs != null && lastErr instanceof Error && !/^HTTP \d/.test(lastErr.message)) {
+    await sleep(reintentoTardioMs);
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeout);
+    try {
+      const res = await fetch(url, {
+        ...opts,
+        signal: ctrl.signal,
+        headers: { 'user-agent': UA, ...(opts.headers || {}) },
+      });
+      if (res.status !== 429 && res.status < 500) return res;
+      lastErr = new Error(`HTTP ${res.status} en ${url}`);
     } catch (err) {
       lastErr = err;
     } finally {
@@ -54,6 +81,16 @@ export function normalizeOrigin(input) {
   if (!/^https?:\/\//i.test(raw)) raw = 'https://' + raw;
   const u = new URL(raw);
   return u.origin;
+}
+
+/**
+ * Une un origen (o una URL con barra final) con una ruta absoluta sin
+ * producir `https://x.com//robots.txt`. La doble barra no rompe la petición,
+ * pero se imprime en el informe como fuente de cada comprobación, y un
+ * prospecto técnico la lee como descuido.
+ */
+export function unirUrl(base, ruta) {
+  return new URL(ruta, base).href;
 }
 
 export function hostOf(url) {

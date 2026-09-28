@@ -19,7 +19,7 @@
    Paridad con el motor de velocidad: mismas fuentes con fecha, mismo
    vocabulario de estados, misma prohibición de rellenar huecos. */
 
-import { fetchRetry, today } from './util.js';
+import { fetchRetry, today, unirUrl } from './util.js';
 
 /** Estados posibles. `aviso` es un fallo menor o dependiente del contexto;
     `no_aplica` es una comprobación que esta tienda no necesita. */
@@ -184,7 +184,7 @@ async function texto200(url, timeout = 20000) {
 }
 
 export async function leerRobots(origin) {
-  const r = await texto200(`${origin}/robots.txt`);
+  const r = await texto200(unirUrl(origin, '/robots.txt'));
   if (!r.ok) return { existe: false, status: r.status, motivo: r.error || `HTTP ${r.status}`, sitemaps: [], disallow: [] };
 
   const lineas = r.cuerpo.split('\n').map(l => l.replace(/#.*$/, '').trim()).filter(Boolean);
@@ -240,12 +240,12 @@ export async function leerRobots(origin) {
     disallow,
     bloqueos_graves: bloqueosGraves,
     alcance: 'sólo se evalúa el grupo User-agent: *; los grupos de bots concretos se ignoran a propósito',
-    fuente: `${origin}/robots.txt`,
+    fuente: unirUrl(origin, '/robots.txt'),
   };
 }
 
 export async function leerSitemap(origin) {
-  const r = await texto200(`${origin}/sitemap.xml`);
+  const r = await texto200(unirUrl(origin, '/sitemap.xml'));
   if (!r.ok) return { existe: false, status: r.status, motivo: r.error || `HTTP ${r.status}`, secciones: [] };
 
   const locs = [...r.cuerpo.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map(m => m[1]);
@@ -267,12 +267,12 @@ export async function leerSitemap(origin) {
        sobre listas de cientos de dominios. El número de URLs indexables
        se declara como no medido en vez de estimarse. */
     alcance: 'sólo el índice; los sub-sitemaps no se descargan',
-    fuente: `${origin}/sitemap.xml`,
+    fuente: unirUrl(origin, '/sitemap.xml'),
   };
 }
 
 export async function comprobar404(origin) {
-  const url = `${origin}/pagina-inexistente-auditoria-seo-0000`;
+  const url = unirUrl(origin, '/pagina-inexistente-auditoria-seo-0000');
   const r = await texto200(url, 15000);
   return {
     url,
@@ -284,8 +284,8 @@ export async function comprobar404(origin) {
 }
 
 export async function comprobarLlmsTxt(origin) {
-  const r = await texto200(`${origin}/llms.txt`, 12000);
-  return { existe: Boolean(r.ok && r.cuerpo.trim()), status: r.status, url: `${origin}/llms.txt` };
+  const r = await texto200(unirUrl(origin, '/llms.txt'), 12000);
+  return { existe: Boolean(r.ok && r.cuerpo.trim()), status: r.status, url: unirUrl(origin, '/llms.txt') };
 }
 
 /**
@@ -356,7 +356,10 @@ export function comprobar({ origin, paginas, robots, sitemap, notFound, duplicad
   const home = meta.home;
   const producto = meta.producto || null;
   const coleccion = meta.coleccion || null;
-  const conMeta = paginas.map(p => p.meta);
+  /* Una página que hace dos papeles — una tienda cuya home es su única
+     colección — es una página, no dos. Contarla dos veces daría un
+     `title_unico` en falla contra sí misma. */
+  const conMeta = [...new Map(paginas.map(p => [p.meta.url_final, p.meta])).values()];
 
   /* ── Grupo 1: indexabilidad. Si algo de aquí falla, lo demás da igual ── */
 
@@ -364,7 +367,7 @@ export function comprobar({ origin, paginas, robots, sitemap, notFound, duplicad
     ? nuevo('robots_txt', 'robots.txt accesible', 'pasa',
         { valor: `${robots.bytes} bytes`, fuente: robots.fuente, grupo: 'indexabilidad' })
     : nuevo('robots_txt', 'robots.txt accesible', 'falla',
-        { valor: robots.motivo, fuente: `${origin}/robots.txt`, grupo: 'indexabilidad' }));
+        { valor: robots.motivo, fuente: unirUrl(origin, '/robots.txt'), grupo: 'indexabilidad' }));
 
   /* Las dos que dependen de robots.txt se emiten igual cuando no existe,
      como `no_medible`. Si no, el total baja a 20 y la web promete 22: un
@@ -400,15 +403,25 @@ export function comprobar({ origin, paginas, robots, sitemap, notFound, duplicad
         fuente: sitemap.fuente, grupo: 'indexabilidad',
       })
     : nuevo('sitemap_xml', 'sitemap.xml servido y con secciones', 'falla',
-        { valor: sitemap.motivo, fuente: `${origin}/sitemap.xml`, grupo: 'indexabilidad' }));
+        { valor: sitemap.motivo, fuente: unirUrl(origin, '/sitemap.xml'), grupo: 'indexabilidad' }));
 
   const xRobots = xRobotsTag || null;
   const bloqueadas = conMeta.filter(m => /noindex/i.test(m.meta_robots || ''));
-  c.push(bloqueadas.length || /noindex/i.test(xRobots || '')
+  /* Se culpa a la cabecera sólo si ELLA dice noindex. Que exista no basta:
+     `X-Robots-Tag: noarchive` es inocuo, y atribuirle el bloqueo manda al
+     cliente a arreglar lo que no está roto mientras el meta robots de
+     verdad sigue ahí. */
+  const cabeceraNoindex = /noindex/i.test(xRobots || '');
+  const motivos = [
+    cabeceraNoindex && `cabecera X-Robots-Tag: ${xRobots}`,
+    bloqueadas.length && `${bloqueadas.length} de ${conMeta.length} páginas con meta robots noindex`,
+  ].filter(Boolean);
+  c.push(motivos.length
     ? nuevo('noindex', 'Ninguna plantilla clave está en noindex', 'falla', {
-        valor: xRobots ? `cabecera X-Robots-Tag: ${xRobots}` : `${bloqueadas.length} de ${conMeta.length} páginas con meta robots noindex`,
+        valor: motivos.join(' · '),
         evidencia: bloqueadas.map(m => m.url).join(' · ') || null,
-        fuente: xRobots ? 'cabeceras HTTP de respuesta' : FUENTE_HTML, grupo: 'indexabilidad',
+        fuente: [cabeceraNoindex && 'cabeceras HTTP de respuesta', bloqueadas.length && FUENTE_HTML].filter(Boolean).join(' · '),
+        grupo: 'indexabilidad',
       })
     : nuevo('noindex', 'Ninguna plantilla clave está en noindex', 'pasa',
         { valor: `${conMeta.length} páginas comprobadas`, grupo: 'indexabilidad' }));
@@ -643,10 +656,13 @@ export function resumir(comprobaciones) {
 
   for (const c of comprobaciones) {
     porEstado[c.estado] = (porEstado[c.estado] || 0) + 1;
-    porGrupo[c.grupo] ??= { total: 0, falla: 0, aviso: 0 };
+    /* Cada estado por separado, no `total − falla − aviso`: esa resta
+       contaba `no_medible` como aprobado, y una tienda sin robots.txt salía
+       con un 6/6 verde en indexabilidad. Un hueco pintado como aprobado es
+       el aviso tranquilizador y falso que este motor existe para no dar. */
+    porGrupo[c.grupo] ??= { total: 0, pasa: 0, falla: 0, aviso: 0, no_aplica: 0, no_medible: 0 };
     porGrupo[c.grupo].total++;
-    if (c.estado === 'falla') porGrupo[c.grupo].falla++;
-    if (c.estado === 'aviso') porGrupo[c.grupo].aviso++;
+    if (c.estado in porGrupo[c.grupo]) porGrupo[c.grupo][c.estado]++;
   }
 
   const evaluadas = porEstado.pasa + porEstado.falla + porEstado.aviso;
@@ -654,7 +670,11 @@ export function resumir(comprobaciones) {
     total: comprobaciones.length,
     evaluadas,
     ...porEstado,
-    por_grupo: porGrupo,
+    por_grupo: Object.fromEntries(Object.entries(porGrupo).map(([k, v]) => [k, {
+      ...v,
+      // Lo que de verdad se juzgó: sin lo no medible y sin lo que no aplica.
+      evaluadas: v.pasa + v.falla + v.aviso,
+    }])),
     /* Porcentaje sobre las evaluadas, no sobre el total: lo que no se pudo
        medir no cuenta ni a favor ni en contra. */
     salud_pct: evaluadas ? Math.round((porEstado.pasa / evaluadas) * 100) : null,

@@ -33,6 +33,11 @@ node bin/audit.js tienda.com --competidores rival-a.com,rival-b.com
 Sale el JSON crudo por stdout y un resumen por stderr. Con `--out auditorias/`
 lo guarda en un archivo.
 
+Mide el móvil **tres veces** y publica la corrida mediana por LCP, con el
+rango: una corrida suelta no es un dato (el LCP de NaturVet varió un 40 % el
+mismo día). Las respuestas cacheadas de PSI —mismo `fetchTime`— no cuentan.
+`--corridas 1` para una criba rápida de muchas tiendas.
+
 Los competidores **los pones tú**. Adivinarlos automáticamente daría
 comparaciones falsas, y una comparación falsa hunde el informe en la primera
 frase. Dos por tienda bastan.

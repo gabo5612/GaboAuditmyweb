@@ -24,6 +24,7 @@ if (!args._[0] || args.help) {
     --facturacion 250000         facturación mensual, si la conoces
     --moneda EUR                 EUR | USD | GBP | CAD | AUD
     --rango alto                 rango declarado en el formulario
+    --corridas 3                 corridas de PSI móvil; se publica la mediana
     --out <carpeta>              guarda el JSON (por defecto: stdout)
 
   Variables de entorno:
@@ -38,6 +39,7 @@ const resultado = await auditar(args._[0], {
   facturacion: args.facturacion ? Number(args.facturacion) : null,
   moneda: args.moneda || 'EUR',
   facturacionRango: args.rango || null,
+  corridas: args.corridas ? Number(args.corridas) : 3,
 });
 
 const json = JSON.stringify(resultado, null, 2);
@@ -62,7 +64,8 @@ function resumen(r) {
   }
   const m = r.rendimiento.movil;
   log(`\n  score móvil ...... ${m.score}`);
-  log(`  LCP móvil ........ ${m.metricas.lcp_s}s  (objetivo 2,5s)`);
+  log(`  LCP móvil ........ ${m.metricas.lcp_s}s  (objetivo 2,5s)${m.corridas?.length > 1 ? ` · ${m.criterio}, rango ${m.rango.lcp_s?.join('–')}s` : ''}`);
+  log(`  URL analizada .... ${m.url_analizada}`);
   log(`  CLS .............. ${m.metricas.cls}`);
   log(`  peso total ....... ${m.recursos.total_kb} KB`);
   log(`  apps detectadas .. ${r.apps.total}`);

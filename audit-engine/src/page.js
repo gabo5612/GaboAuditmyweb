@@ -5,7 +5,7 @@
    extrae lo que se puede extraer con fiabilidad: atributos de etiquetas
    concretas. Nada que dependa de entender la estructura del documento. */
 
-import { fetchRetry, hostOf, log } from './util.js';
+import { fetchRetry, hostOf, log, unirUrl } from './util.js';
 
 const RE_SCRIPT = /<script[^>]+src=["']([^"']+)["']/gi;
 const RE_LINK_TAG = /<link\b[^>]*>/gi;
@@ -163,9 +163,9 @@ function analizarFuentes(html) {
  * enlaces del propio HTML de la home.
  */
 export async function descubrirPaginas(origin, homeHtml) {
-  const producto = await primerHandle(`${origin}/products.json?limit=1`, 'products')
+  const producto = await primerHandle(unirUrl(origin, '/products.json?limit=1'), 'products')
     || primerEnlace(homeHtml, origin, '/products/');
-  const coleccion = await primerHandle(`${origin}/collections.json?limit=1`, 'collections')
+  const coleccion = await primerHandle(unirUrl(origin, '/collections.json?limit=1'), 'collections')
     || primerEnlace(homeHtml, origin, '/collections/');
 
   log(`  · producto: ${producto || 'no encontrado'}`);

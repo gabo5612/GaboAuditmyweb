@@ -51,6 +51,10 @@ const T = {
     weight: 'Page weight',
     print: 'Print',
     notMeasured: 'not measured',
+    analysed: 'URL analysed',
+    medianOf: 'median of {n} runs',
+    range: 'range',
+    score: 'score',
     high: 'high', medium: 'medium', low: 'low',
   },
   es: {
@@ -93,9 +97,26 @@ const T = {
     weight: 'Peso de la página',
     print: 'Imprimir',
     notMeasured: 'sin medir',
+    analysed: 'URL analizada',
+    medianOf: 'mediana de {n} corridas',
+    range: 'rango',
+    score: 'score',
     high: 'alto', medium: 'medio', low: 'bajo',
   },
 };
+
+/* «median of 3 runs (score 48–55, LCP 15.29–21.45 s)». El rango va en el
+   informe porque el prospecto va a volver a medir, y si le sale otra cifra
+   tiene que caer dentro de lo que ya le dijimos. */
+function medianaTexto(movil, t) {
+  const r = movil.rango || {};
+  const tramo = (par, u = '') => (par && par[0] !== par[1] ? `${par[0]}–${par[1]}${u}` : null);
+  const partes = [
+    tramo(r.score) && `${t.score} ${tramo(r.score)}`,
+    tramo(r.lcp_s, ' s') && `LCP ${tramo(r.lcp_s, ' s')}`,
+  ].filter(Boolean);
+  return `${t.medianOf.replace('{n}', movil.corridas.length)}${partes.length ? ` (${t.range}: ${partes.join(', ')})` : ''}`;
+}
 
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -193,6 +214,8 @@ function seccionTitular(datos, a, t, movil, dinero, locale) {
 
     <div class="prov">
       ${esc(t.source)}: ${esc(movil.fuente)}${movil.version_lighthouse ? ` v${esc(movil.version_lighthouse)}` : ''} · ${esc(movil.fecha)}
+      ${movil.url_analizada ? ` · ${esc(t.analysed)}: ${esc(movil.url_analizada)}` : ''}
+      ${movil.corridas?.length > 1 ? ` · ${esc(medianaTexto(movil, t))}` : ''}
       ${datos.tema?.nombre ? ` · ${esc(t.theme)}: ${esc(datos.tema.nombre)}` : ''}
       ${datos.apps?.total != null ? ` · ${esc(t.apps)}: ${datos.apps.total}` : ''}
       ${movil.recursos?.total_kb ? ` · ${esc(t.weight)}: ${movil.recursos.total_kb} KB` : ''}
@@ -403,7 +426,8 @@ h1,h2,h3,h4{letter-spacing:-.02em;margin:0}
 .vital{background:var(--s1);border:1px solid var(--hair);border-radius:10px;padding:16px}
 .vital__v{font-size:24px;font-weight:600;margin-top:6px;display:flex;align-items:baseline;gap:8px}
 .ico{font-size:13px}
-.vital--good .ico{color:var(--brand-hi)}.vital--warn .ico{color:var(--warn)}.vital--bad .ico{color:var(--bad)}
+.vital--good .ico{color:var(--brand-hi)}.vital--warn .ico{color:var(--warn)}.vital--bad .ico{color:var(--bad)}.vital--muted .ico{color:var(--ink3)}
+.vital__gap{font-size:12px;color:var(--ink3);margin-top:4px}
 .assum{margin-top:24px;border-top:1px solid var(--hair);padding-top:16px}
 .assum summary{cursor:pointer;font-size:14px;color:var(--ink2);list-style:none}
 .assum summary::after{content:" +";font-family:var(--mono);color:var(--ink3)}

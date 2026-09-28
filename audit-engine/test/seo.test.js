@@ -213,6 +213,15 @@ describe('comprobar', () => {
     assert.match(schema.valor, /offers\.price/);
   });
 
+  test('una página con dos papeles cuenta una vez en las comprobaciones por página', () => {
+    const home = metaDe('<title>Una tienda de prueba</title><h1>a</h1><script type="application/ld+json">{"@type":"ItemList"}</script>');
+    const e = entrada();
+    e.paginas = [{ rol: 'home', meta: home }, { rol: 'coleccion', meta: home }];
+    const c = comprobar(e);
+    assert.equal(c.find(x => x.id === 'title_unico').estado, 'pasa');
+    assert.equal(c.find(x => x.id === 'schema_coleccion').estado, 'pasa');
+  });
+
   test('un noindex por cabecera se detecta aunque el HTML esté limpio', () => {
     const c = comprobar(entrada({ xRobotsTag: 'noindex, nofollow' }));
     const noindex = c.find(x => x.id === 'noindex');

@@ -58,6 +58,7 @@ const T = {
     print: 'Print',
     high: 'high', medium: 'medium', low: 'low',
     estados: { pasa: 'pass', falla: 'fail', aviso: 'warning', no_aplica: 'not applicable', no_medible: 'not measurable' },
+    unmeasured: 'not measured',
   },
   es: {
     title: 'Auditoría de SEO técnico',
@@ -105,6 +106,7 @@ const T = {
     print: 'Imprimir',
     high: 'alto', medium: 'medio', low: 'bajo',
     estados: { pasa: 'pasa', falla: 'falla', aviso: 'aviso', no_aplica: 'no aplica', no_medible: 'no medible' },
+    unmeasured: 'sin medir',
   },
 };
 
@@ -181,7 +183,7 @@ function seccionTitular(datos, a, t) {
     <div class="formula mono">${esc(t.health)}: ${r.pasa}/${r.evaluadas} · ${r.salud_pct}%</div>
 
     <div class="vitals">
-      ${grupos.map(([g, v]) => tile(t.groups[g] || g, v)).join('')}
+      ${grupos.map(([g, v]) => tile(t.groups[g] || g, v, t)).join('')}
     </div>
 
     <div class="prov">
@@ -192,12 +194,19 @@ function seccionTitular(datos, a, t) {
   </section>`;
 }
 
-function tile(nombre, v) {
-  const estado = v.falla ? 'bad' : v.aviso ? 'warn' : 'good';
-  const icono = { good: '●', warn: '▲', bad: '■' }[estado];
+/* Aprobadas sobre evaluadas, y lo no medido a la vista. Un grupo sin nada
+   fallido pero con huecos no sale verde: sale neutro, con el hueco
+   contado. El verde sólo significa «todo lo de aquí se midió y pasa». */
+function tile(nombre, v, t) {
+  const pasa = v.pasa ?? (v.total - v.falla - v.aviso);
+  const sinMedir = v.no_medible || 0;
+  const evaluadas = v.evaluadas ?? (pasa + v.falla + v.aviso);
+  const estado = v.falla ? 'bad' : v.aviso ? 'warn' : sinMedir ? 'muted' : 'good';
+  const icono = { good: '●', warn: '▲', bad: '■', muted: '◆' }[estado];
   return `<div class="vital vital--${estado}">
     <div class="lbl">${esc(nombre)}</div>
-    <div class="vital__v mono"><span class="ico" aria-hidden="true">${icono}</span>${v.total - v.falla - v.aviso}/${v.total}</div>
+    <div class="vital__v mono"><span class="ico" aria-hidden="true">${icono}</span>${pasa}/${evaluadas}</div>
+    ${sinMedir ? `<div class="vital__gap mono">${sinMedir} ${esc(t.unmeasured)}</div>` : ''}
   </div>`;
 }
 

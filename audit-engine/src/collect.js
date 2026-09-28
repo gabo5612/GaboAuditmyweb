@@ -4,8 +4,8 @@
    fecha. La prosa la escribe la etapa ③ a partir de esto, y sólo puede
    usar números que aparezcan en esta salida. */
 
-import { normalizeOrigin, hostOf, today, log } from './util.js';
-import { runPsi } from './psi.js';
+import { normalizeOrigin, hostOf, today, log, sleep } from './util.js';
+import { runPsi, elegirMediana } from './psi.js';
 import { runCrux } from './crux.js';
 import { cargarPagina, descubrirPaginas } from './page.js';
 import { analizarInfra, confirmarShopifyEnHtml, detectarTema } from './infra.js';
@@ -18,9 +18,19 @@ import { calcularScore, detectarMoneda } from './score.js';
  * @param {object} opciones
  * @param {string[]} opciones.competidores URLs de competidores del mismo nicho
  * @param {number|null} opciones.facturacion facturación mensual, si el cliente la dio
+ * @param {number} opciones.corridas corridas de PSI móvil; se publica la mediana
+ * @param {number} opciones.esperaCacheMs separación mínima entre corridas móviles
  */
 export async function auditar(entrada, opciones = {}) {
-  const { competidores = [], facturacion = null, moneda = 'EUR', facturacionRango = null } = opciones;
+  const {
+    competidores = [], facturacion = null, moneda = 'EUR', facturacionRango = null,
+    /* 1 por defecto en la biblioteca; los bin/ piden 3. Así la cuota de un
+       uso programático no se triplica sin que nadie lo haya decidido. */
+    corridas = 1,
+    // PSI cachea ~60 s por URL: preguntar antes devuelve la misma corrida.
+    esperaCacheMs = 65000,
+    psiOpciones = {},
+  } = opciones;
   const origin = normalizeOrigin(entrada);
   const host = hostOf(origin);
   const faltantes = [];
@@ -67,16 +77,26 @@ export async function auditar(entrada, opciones = {}) {
   if (!tema) faltantes.push('No se pudo identificar el tema (Shopify.theme no presente en el HTML).');
 
   // ── Rendimiento ───────────────────────────────────────────────────
-  let psiMovil = null, psiEscritorio = null;
+  const urlPsi = infra.url_final || origin;
+  const corridasMovil = [];
+  let ultimaMovil = 0;
+  const medirMovil = async () => {
+    const espera = esperaCacheMs - (Date.now() - ultimaMovil);
+    if (ultimaMovil && espera > 0) await sleep(espera);
+    ultimaMovil = Date.now();
+    return runPsi(urlPsi, 'mobile', psiOpciones);
+  };
+
+  let psiEscritorio = null;
   try {
-    psiMovil = await runPsi(infra.url_final || origin, 'mobile');
+    corridasMovil.push(await medirMovil());
   } catch (err) {
     // Sin el dato móvil no hay informe. Es la métrica sobre la que se
     // sostiene todo el argumento: mejor fallar que rellenar el hueco.
     return fallida(origin, host, `PageSpeed móvil falló: ${err.message}`);
   }
   try {
-    psiEscritorio = await runPsi(infra.url_final || origin, 'desktop');
+    psiEscritorio = await runPsi(urlPsi, 'desktop', psiOpciones);
   } catch (err) {
     faltantes.push(`No hay dato de PageSpeed en escritorio: ${err.message}`);
   }
@@ -122,6 +142,32 @@ export async function auditar(entrada, opciones = {}) {
     faltantes.push('Sin comparativa: no se indicaron competidores del mismo nicho.');
   }
 
+  /* ── Resto de corridas móviles ───────────────────────────────────
+     Van aquí, después de escritorio, CrUX y competidores, para que la
+     espera contra la caché de PSI corra mientras se mide lo demás en vez
+     de sumarse. Una respuesta cacheada lleva el mismo fetchTime que la
+     anterior: no es otra medición y no cuenta. */
+  const vistas = new Set(corridasMovil.map(c => c.fetch_time).filter(Boolean));
+  let intentos = 0;
+  while (corridasMovil.length < corridas && intentos < corridas * 2) {
+    intentos++;
+    try {
+      const c = await medirMovil();
+      if (c.fetch_time && vistas.has(c.fetch_time)) {
+        log(`    · respuesta cacheada de PSI (${c.fetch_time}), no cuenta`);
+        continue;
+      }
+      if (c.fetch_time) vistas.add(c.fetch_time);
+      corridasMovil.push(c);
+    } catch (err) {
+      log(`    ! corrida móvil extra falló: ${err.message}`);
+    }
+  }
+  if (corridasMovil.length < corridas) {
+    faltantes.push(`Sólo ${corridasMovil.length} de ${corridas} corridas móviles de PageSpeed: la cifra publicada es la mediana de las que hay.`);
+  }
+  const psiMovil = elegirMediana(corridasMovil);
+
   // ── Dinero y prioridad ────────────────────────────────────────────
   const dinero = calcularPerdida(psiMovil.metricas.lcp_s, facturacion, moneda);
   if (!dinero.medible) {
@@ -139,7 +185,11 @@ export async function auditar(entrada, opciones = {}) {
 
   return {
     estado: 'ok',
-    tienda: { host, origin, url_final: infra.url_final, moneda_activa: monedaActiva },
+    tienda: {
+      host, origin, url_final: infra.url_final, moneda_activa: monedaActiva,
+      // La URL que PSI midió de verdad. El informe imprime ésta, no la pedida.
+      url_analizada: psiMovil.url_analizada,
+    },
     fecha_auditoria: today(),
     infra,
     tema,

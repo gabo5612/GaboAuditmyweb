@@ -21,7 +21,7 @@ if (!args._[0] || args.help) {
     --rango alto                 rango de facturación declarado en el formulario
     --out <carpeta>              guarda el JSON (por defecto: stdout)
 
-  No necesita ninguna variable de entorno: las 21 comprobaciones se hacen
+  No necesita ninguna variable de entorno: las 22 comprobaciones se hacen
   contra el HTML público de la tienda, robots.txt y sitemap.xml.
 `);
   process.exit(args.help ? 0 : 1);

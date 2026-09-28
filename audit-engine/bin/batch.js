@@ -27,7 +27,7 @@ const modoSeo = Boolean(args.seo);
 
 if (!ruta || args.help) {
   console.log(`
-  node bin/batch.js <cola.csv> [--out auditorias/] [--concurrencia 3] [--seo]
+  node bin/batch.js <cola.csv> [--out auditorias/] [--concurrencia 3] [--corridas 3] [--seo]
 
   Columnas del CSV (cabecera obligatoria, el orden da igual):
     url            requerida
@@ -37,6 +37,8 @@ if (!ruta || args.help) {
     rango          rango declarado en el formulario
     nombre, email  sólo se arrastran al resumen
 
+  --corridas 3  corridas de PSI móvil por tienda; se publica la mediana.
+                Para una criba rápida de muchas tiendas, --corridas 1.
   --seo   pasa la misma cola por la auditoría de SEO técnico en vez de la
           de velocidad. No necesita API key y sólo usa url, rango, nombre
           y email; el resto de columnas se ignoran.
@@ -62,6 +64,7 @@ const resultados = await enPool(filas, Number(args.concurrencia) || porDefecto, 
         facturacion: fila.facturacion ? Number(fila.facturacion) : null,
         moneda: fila.moneda || 'EUR',
         facturacionRango: fila.rango || null,
+        corridas: args.corridas ? Number(args.corridas) : 3,
       });
     await writeFile(join(carpeta, `${r.tienda.host}${modoSeo ? '.seo' : ''}.json`), JSON.stringify(r, null, 2));
     return { fila, r };

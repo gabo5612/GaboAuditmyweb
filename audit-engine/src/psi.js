@@ -16,13 +16,23 @@ const LAB_METRICS = {
   'interactive': { clave: 'tti_s', divisor: 1000, decimales: 2 },
 };
 
-export async function runPsi(url, strategy = 'mobile') {
+/* Reintento tardío para cortes de red: ver fetchRetry. Medio minuto cubre
+   el corte que se comió el PSI de escritorio de NaturVet. */
+const REINTENTO_TARDIO_MS = 25000;
+
+/**
+ * @param {string} url
+ * @param {'mobile'|'desktop'} strategy
+ * @param {object} [opciones] esperas de reintento, inyectables para los tests
+ */
+export async function runPsi(url, strategy = 'mobile', opciones = {}) {
+  const { esperaBaseMs, reintentoTardioMs = REINTENTO_TARDIO_MS } = opciones;
   const params = new URLSearchParams({ url, strategy, category: 'performance' });
   const key = process.env.PAGESPEED_API_KEY;
   if (key) params.set('key', key);
 
   log(`  · PSI ${strategy}: ${url}`);
-  const data = await fetchJson(`${ENDPOINT}?${params}`, { timeout: 120000 });
+  const data = await fetchJson(`${ENDPOINT}?${params}`, { timeout: 120000, esperaBaseMs, reintentoTardioMs });
 
   const lh = data.lighthouseResult;
   if (!lh) throw new Error('PSI no devolvió lighthouseResult');
@@ -47,7 +57,13 @@ export async function runPsi(url, strategy = 'mobile') {
     fuente: 'PageSpeed Insights',
     version_lighthouse: lh.lighthouseVersion || null,
     fecha: (lh.fetchTime || new Date().toISOString()).slice(0, 10),
-    url_analizada: lh.finalUrl || url,
+    // Identifica la corrida: PSI devuelve la misma respuesta cacheada si se
+    // le pregunta dos veces por la misma URL en ~60 s, con el mismo fetchTime.
+    fetch_time: lh.fetchTime || null,
+    /* Lo que Lighthouse cargó de verdad, después de redirecciones. Desde
+       Lighthouse 10 `finalUrl` ya no existe y el campo caía siempre a la URL
+       pedida: el JSON decía www.naturvet.com y PSI había medido el ápex. */
+    url_analizada: lh.finalDisplayedUrl || lh.mainDocumentUrl || lh.finalUrl || url,
   };
 }
 
@@ -90,4 +106,33 @@ function extraerTerceros(audits) {
       bloqueo_ms: Math.round(i.blockingTime || 0),
     }))
     .sort((a, b) => b.bloqueo_ms - a.bloqueo_ms);
+}
+
+/**
+ * Elige la corrida mediana por LCP y resume el resto. Una corrida suelta no
+ * es un dato: el LCP móvil de NaturVet dio 15,29 / 20,72 / 21,45 s el mismo
+ * día. Se publica la corrida del medio —con todas sus cifras, para que
+ * score, LCP y oportunidades vengan de la misma medición— y el rango.
+ *
+ * Con un número par de corridas gana la más rápida de las dos centrales: el
+ * titular tiene que resistir que el prospecto lo vuelva a medir.
+ */
+export function elegirMediana(corridas) {
+  const validas = corridas.filter(Boolean);
+  if (!validas.length) return null;
+  const orden = [...validas].sort((a, b) =>
+    (a.metricas.lcp_s ?? Infinity) - (b.metricas.lcp_s ?? Infinity));
+  const mediana = orden[Math.floor((orden.length - 1) / 2)];
+
+  const serie = clave => validas.map(c => clave(c)).filter(v => v != null);
+  const rango = xs => (xs.length ? [Math.min(...xs), Math.max(...xs)] : null);
+  const scores = serie(c => c.score);
+  const lcps = serie(c => c.metricas.lcp_s);
+
+  return {
+    ...mediana,
+    corridas: validas.map(c => ({ score: c.score, lcp_s: c.metricas.lcp_s, fetch_time: c.fetch_time })),
+    criterio: validas.length > 1 ? `mediana de ${validas.length} corridas por LCP` : 'una sola corrida',
+    rango: { score: rango(scores), lcp_s: rango(lcps) },
+  };
 }
