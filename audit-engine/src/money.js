@@ -11,8 +11,17 @@ export const OBJETIVO_LCP_S = 2.5;   // umbral "good" de Core Web Vitals
 export const PERDIDA_POR_S = 8;      // % de conversión por segundo de más
 export const PERDIDA_MAXIMA = 45;    // tope; más allá la estimación no es creíble
 
+/* Verificado contra el PDF el 28 sep 2026 (Deloitte Digital, Google y
+   Fifty-Five, «Milliseconds Make Millions», 2020, pág. 15): en retail, una
+   mejora de 0,1 s en cada una de sus cuatro métricas de velocidad se
+   correlacionó con +8,4 % de transacciones — 37 marcas, 30 M de sesiones,
+   4 semanas, regresión logarítmica. El 0,8 % por 100 ms NO sale del estudio:
+   es un décimo de ese efecto, aplicado en lineal al LCP. Se dice así, en vez
+   de citar el 8,4 % como si fuera el coeficiente. */
 export const FUENTE_COEFICIENTE =
-  '0,8% de conversión por cada 100 ms — pendiente de verificar contra la fuente primaria';
+  '0,8% de conversión por cada 100 ms de LCP: un décimo del +8,4% de transacciones por cada 0,1 s que midió en retail Deloitte, «Milliseconds Make Millions» (2020). Correlación, no causalidad.';
+export const FUENTE_COEFICIENTE_EN =
+  '0.8% of conversion per 100 ms of LCP: one tenth of the +8.4% in retail transactions per 0.1 s measured by Deloitte, "Milliseconds Make Millions" (2020). Correlation, not causation.';
 
 /**
  * @param {number} lcpSegundos LCP móvil medido

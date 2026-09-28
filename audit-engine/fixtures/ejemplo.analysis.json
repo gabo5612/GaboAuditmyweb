@@ -10,7 +10,7 @@
       "Coefficient of 8% of conversion per second above target.",
       "Monthly revenue unknown, so the figure stays a percentage."
     ],
-    "fuente": "0.8% of conversion per extra 100ms — pending verification against the primary source"
+    "fuente": "0.8% of conversion per 100 ms of LCP: one tenth of the +8.4% in retail transactions per 0.1 s measured by Deloitte, \"Milliseconds Make Millions\" (2020). Correlation, not causation."
   },
   "hallazgos": [
     {

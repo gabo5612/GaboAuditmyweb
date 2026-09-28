@@ -117,7 +117,7 @@
     "lcp_s": 5.2, "objetivo_s": 2.5, "exceso_s": 2.7, "perdida_pct": 21.6,
     "perdida_importe": null, "moneda": "USD", "facturacion_mensual": null,
     "formula": "(5.2s − 2.5s) × 8%/s = 21,6% de la facturación mensual",
-    "fuente": "0,8% de conversión por cada 100 ms — pendiente de verificar contra la fuente primaria",
+    "fuente": "0,8% de conversión por cada 100 ms de LCP: un décimo del +8,4% de transacciones por cada 0,1 s que midió en retail Deloitte, «Milliseconds Make Millions» (2020). Correlación, no causalidad.",
     "supuestos": [
       "Objetivo de LCP: 2.5s (umbral \"good\" de Core Web Vitals).",
       "Coeficiente: 8% de conversión por segundo por encima del objetivo.",
