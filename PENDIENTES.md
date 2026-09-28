@@ -16,8 +16,8 @@ agendadas**. Los bloques 0, 1 y 4 son los que mueven el objetivo; el bloque 2 no
 
 El bloque 0 ya casi no bloquea: la clave funciona y está restringida, CrUX responde,
 el secret está en Actions, el remoto está resuelto y el motor ya ha medido una tienda
-real de principio a fin. Lo que queda en pie es el dominio y dos tiendas más de
-prueba. **El cuello de botella ya no es técnico.**
+real de principio a fin. El dominio ya está (`gaboauditmyweb.dev`, 28 sep). Lo que queda en pie son dos
+tiendas más de prueba. **El cuello de botella ya no es técnico.**
 
 ---
 
@@ -76,8 +76,9 @@ Nada de lo demás corre hasta que esto esté.
 - [x] **Commitear y empujar.** La nota de "un único commit inicial" era vieja. La sesión del 13 de agosto añade cinco commits, todos en `main` y empujados
 - [x] **Remoto resuelto:** `origin` → `github.com/gabo5612/GaboAuditmyweb.git`
 - [ ] **Correr el motor contra 3 tiendas reales — 1 de 3.** `naturvet.com` hecha. Faltan dos, y conviene que sean de tema y tamaño distintos
-- [ ] **Renombrar el proyecto en Vercel** a `gaboauditmyweb` → `gaboauditmyweb.vercel.app`. El repo (`gabo5612/GaboAuditmyweb`) y la carpeta local ya están renombrados; Vercel sigue el repo por id, así que el despliegue no se rompe, pero la URL sigue diciendo `portfolio-2026-snowy-one` hasta que se cambie a mano en Settings → General → Project Name
-- [ ] **Comprar el dominio.** Sin dominio no hay informe con link, ni Resend, ni email que no acabe en spam ← **único bloqueante duro que queda**
+- [x] ~~**Renombrar el proyecto en Vercel**~~ — resuelto con dominio propio: el sitio vive en `https://gaboauditmyweb.dev` (2026-09-28) y el portfolio ya apunta ahí. Había dos proyectos de Vercel: el viejo `gabo_audit_my_web` (`portfolio-2026-snowy-one`), que se quedó con el dominio al comprarlo, y `gaboauditmyweb`, el linkeado a esta carpeta con el build explícito. El dominio se movió a este último; el viejo queda huérfano — borrarlo desde el panel cuando convenga
+- [x] **Dominio comprado y en producción: `gaboauditmyweb.dev`** (28 sep, en Vercel, renueva a $13/año). `www` redirige con 308 al apex. `.dev` está en la lista de precarga HSTS: sólo HTTPS, que Vercel ya sirve. El sitio ahora lleva `canonical` y `og:url` en las tres páginas, `robots.txt` y `sitemap.xml`
+- [x] **DMARC base publicado:** `_dmarc` → `v=DMARC1; p=none`, sin `rua` todavía (ver `OUTBOUND.md`)
 
 ---
 
@@ -136,7 +137,7 @@ Ninguno rompe la venta hoy, pero los tres tocan la credibilidad de los números.
 - [ ] **Revisar `audit-engine/bin/report.js`** — se sobrescribió sin leerlo, con dos sesiones paralelas en vuelo (§10 del reporte SEO)
 - [ ] **Segunda métrica del gauge (`—/22`)** — se rellena corriendo `bin/seo.js` contra el propio dominio en el build
 - [ ] **Gauge de PageSpeed del hero** — fetch en build a la API + enlace al informe público. Depende del bloque 0
-- [ ] **Publicación del informe en URL pública** — `tudominio.com/audit/<token>` con `noindex`. Hoy el motor genera un archivo, no un link: se pierde saber quién lo abrió y hasta dónde bajó, que es lo que te dice a quién llamar
+- [ ] **Publicación del informe en URL pública** — `gaboauditmyweb.dev/audit/<token>` con `noindex`. Hoy el motor genera un archivo, no un link: se pierde saber quién lo abrió y hasta dónde bajó, que es lo que te dice a quién llamar
 
 ### Lo que NO se construye todavía
 
@@ -186,8 +187,8 @@ Lo único que mueve el objetivo de €4.500/mes.
 - [ ] Calentamiento de dominio: 10 emails/día la primera semana
 - [ ] Enlace de baja **y dirección postal física** en todos los emails; la segunda la exige CAN-SPAM en EE. UU.
 
-**Resend:** cuenta creada, y **bloqueada hasta que haya dominio** — exige uno
-verificado para enviar, sin sandbox aprovechable. El plan gratuito da 3.000
+**Resend:** cuenta creada; **desbloqueada** desde el 28 sep — falta añadir
+`send.gaboauditmyweb.dev` en el panel y pegar sus registros (ver `OUTBOUND.md`). El plan gratuito da 3.000
 correos/mes y 100/día contra los ~215/mes que necesitas, así que no hará falta
 pagarlo. Configuración, registros DNS, calentamiento y las tres plantillas de
 correo, en `OUTBOUND.md`.

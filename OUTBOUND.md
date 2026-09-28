@@ -1,7 +1,7 @@
 # Outbound — correo en frío
 
 **Fecha de corte:** 13 de agosto de 2026
-**Estado:** cuenta de Resend creada · **bloqueado en la compra del dominio**
+**Estado:** cuenta de Resend creada · dominio `gaboauditmyweb.dev` comprado el 28 sep · DMARC `p=none` publicado · **falta verificar `send.` en Resend**
 
 Este documento es el bloque 4 de `PENDIENTES.md` desarrollado. No es código:
 la fase 3 del workflow (cola, envío automático, panel de aprobación) sigue sin
@@ -30,12 +30,12 @@ Nunca vas a necesitar el plan de pago para esto.
 
 ### 1. Envía desde un subdominio, no desde la raíz
 
-`send.tudominio.com`, no `tudominio.com`. Es la recomendación de Resend y el
+`send.gaboauditmyweb.dev`, no `gaboauditmyweb.dev`. Es la recomendación de Resend y el
 motivo es de reputación: si quemas el subdominio con correo en frío, el
 dominio raíz —el de tus facturas, el de tu Cal.com, el de los informes— no se
 va contigo. Separarlos después es mucho más caro que separarlos ahora.
 
-Dirección de envío sugerida: `gabriel@send.tudominio.com`, con
+Dirección de envío sugerida: `gabriel@send.gaboauditmyweb.dev`, con
 `reply-to` al buzón que leas de verdad.
 
 ### 2. Los registros DNS que da Resend
@@ -44,9 +44,9 @@ Los genera él al añadir el dominio y son distintos para cada uno — el select
 DKIM es único, así que no se pueden dejar escritos aquí. Van **todos sobre el
 subdominio**, nunca sobre la raíz:
 
-- `MX` — sobre `send.tudominio.com`
-- `TXT` de SPF — sobre `send.tudominio.com`
-- `TXT` de DKIM — `resend._domainkey.send.tudominio.com`
+- `MX` — sobre `send.gaboauditmyweb.dev`
+- `TXT` de SPF — sobre `send.gaboauditmyweb.dev`
+- `TXT` de DKIM — `resend._domainkey.send.gaboauditmyweb.dev`
 
 Suele verificar en 15 minutos, aunque el DNS puede tardar hasta 72 horas.
 
@@ -56,8 +56,14 @@ Es el único que Resend no resuelve, y el que más pesa en si llegas a bandeja
 de entrada. Empieza en observación:
 
 ```
-_dmarc.tudominio.com   TXT   "v=DMARC1; p=none; rua=mailto:dmarc@tudominio.com"
+_dmarc.gaboauditmyweb.dev   TXT   "v=DMARC1; p=none"      ← publicado el 28 sep
 ```
+
+Le falta `rua=`, a propósito: el dominio no recibe correo, así que un
+`dmarc@gaboauditmyweb.dev` sería un buzón que no existe. Cuando haya dónde
+recibir los informes (un buzón en el dominio, o el agregador gratuito de
+Postmark, que da una dirección propia), se añade `rua=mailto:…` con
+`vercel dns` — Vercel es el DNS del dominio.
 
 `p=none` no protege nada: solo te manda informes. Léelos una o dos semanas,
 comprueba que todo tu correo legítimo alinea, y sube a `p=quarantine` y
@@ -182,9 +188,9 @@ gratis en su panel y conviene mirar desde el primer día:
 
 ## Orden de ejecución
 
-1. Comprar el dominio ← **todo lo demás cuelga de aquí**
-2. Añadirlo en Resend, subdominio `send.`, pegar los tres registros
-3. Añadir DMARC en `p=none` y esperar los primeros informes
+1. ~~Comprar el dominio~~ ✓ `gaboauditmyweb.dev`
+2. Añadirlo en Resend ← **aquí**, subdominio `send.`, pegar los tres registros
+3. ~~DMARC en `p=none`~~ ✓ — falta `rua` para recibir los informes
 4. Correr el lote sobre las 20 tiendas peores
 5. Grabar 5 Looms, enviar 5 correos **a mano** el primer día
 6. Subir a 10/día siguiendo el calentamiento

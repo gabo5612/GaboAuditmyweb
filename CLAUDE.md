@@ -118,6 +118,12 @@ characters these three pages actually use: 55 KB in three files, fewer bytes
 than Google sent and no chain. `sans.woff2` and `mono-400.woff2` are
 preloaded — they are what the first screen needs.
 
+Vercel Web Analytics is the one script that isn't ours, and it does not break
+the rule: `/_vercel/insights/script.js` is served from the site's own origin
+(no extra DNS/TLS), loaded `defer` after `main.js`, cookie-free. It 404s under
+`python3 -m http.server` — expected, harmless. Not the npm package: there is
+no bundler to import it through.
+
 Three things about that subset:
 
 - **Three files, not six.** IBM Plex Sans is variable, so one file covers
