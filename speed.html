@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="sp.metaTitle">Speed sprint · Gabriel Arias</title>
-<meta name="description" data-i18n-content="sp.metaDescription" content="In 30 days I get your Shopify PageSpeed above 85 and your mobile conversion up 10–25%. Fixed scope, fixed price, measured before and after. Free 48-hour audit.">
+<meta name="description" data-i18n-content="sp.metaDescription" content="In 30 days I get your Shopify PageSpeed above 85 and your mobile conversion up 10–25%. Fixed scope and price, measured before and after. Free 48-hour audit.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230E1013'/%3E%3Cpath d='M17.5 4 8 18h6l-1.5 10L22 14h-6z' fill='%232DD48F'/%3E%3C/svg%3E">
 
 <link rel="canonical" href="https://gaboauditmyweb.dev/speed.html">
@@ -12,6 +12,11 @@
 <meta property="og:url" content="https://gaboauditmyweb.dev/speed.html">
 <meta property="og:title" data-i18n-content="sp.ogTitle" content="Speed sprint · Gabriel Arias">
 <meta property="og:description" data-i18n-content="sp.ogDescription" content="PageSpeed 85+ in 30 days, or full refund. Free 48-hour audit, no call required.">
+<meta property="og:image" content="https://gaboauditmyweb.dev/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Two 30-day sprints, two written guarantees: PageSpeed 85+ or refund, every failed check green or refund.">
+<meta name="twitter:card" content="summary_large_image">
 
 <!-- Fonts are served from this origin; the @font-face block in styles.css
      explains why. These two are what the first screen needs: the headline,
@@ -71,12 +76,13 @@
 
     <div class="card gauge enter enter--3">
       <div class="mono-label gauge__label" data-i18n="gauge.label">This site · PageSpeed mobile</div>
-      <svg class="gauge__dial" width="200" height="200" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="No verified PageSpeed score published yet">
+      <svg class="gauge__dial" width="200" height="200" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="PageSpeed mobile score: 98 out of 100">
         <circle cx="64" cy="64" r="54" fill="none" stroke="var(--hairline)" stroke-width="8"></circle>
-        <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="48" font-weight="600" fill="#8A929B">—</text>
+        <circle cx="64" cy="64" r="54" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round" stroke-dasharray="332.5 339.3" transform="rotate(-90 64 64)"></circle>
+        <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="48" font-weight="600" fill="#F2F4F5">98</text>
       </svg>
-      <span class="badge badge--warn badge--md" data-i18n="gauge.badge">▲ Awaiting first measured build</span>
-      <p class="gauge__note" data-i18n="gauge.note">Fetched from the PageSpeed Insights API at build time and published with a link to the public report. Until that build runs, it shows nothing.</p>
+      <span class="badge badge--good badge--md" data-i18n="gauge.badge">● Measured 28 Sep 2026</span>
+      <p class="gauge__note"><span data-i18n="gauge.note">Median of three PageSpeed Insights mobile runs: 98 · 98 · 100. Desktop 100 on all three. Lighthouse 13.5.0.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a> · <a class="gauge__raw" href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fgaboauditmyweb.dev%2F" data-i18n="self.rerun">Re-run it yourself</a></p>
     </div>
   </section>
 

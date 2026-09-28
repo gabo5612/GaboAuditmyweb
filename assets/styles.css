@@ -539,6 +539,8 @@ img,svg{max-width:100%}
   font-variant-numeric:tabular-nums;
 }
 .dual__total{font-size:.4em;color:var(--ink-secondary)}
+.gauge__raw{color:var(--ink-secondary);text-underline-offset:3px;white-space:nowrap}
+.gauge__raw:hover{color:var(--ink-primary)}
 .dual__foot{
   padding:20px 24px;border-top:1px solid var(--hairline);
   display:grid;gap:12px;justify-items:center;
@@ -553,6 +555,8 @@ img,svg{max-width:100%}
   color:var(--ink-muted);font-variant-numeric:tabular-nums;
 }
 .score__total{font-size:.4em;color:var(--ink-secondary)}
+/* Measured, not a placeholder: full ink instead of the muted em-dash grey. */
+.dual__score--measured,.score--measured{color:var(--ink-primary)}
 
 /* ── Track cards (home) ─────────────────────────────────── */
 

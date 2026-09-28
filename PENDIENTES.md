@@ -135,8 +135,7 @@ Ninguno rompe la venta hoy, pero los tres tocan la credibilidad de los números.
 ### Otros
 
 - [ ] **Revisar `audit-engine/bin/report.js`** — se sobrescribió sin leerlo, con dos sesiones paralelas en vuelo (§10 del reporte SEO)
-- [ ] **Segunda métrica del gauge (`—/22`)** — se rellena corriendo `bin/seo.js` contra el propio dominio en el build
-- [ ] **Gauge de PageSpeed del hero** — fetch en build a la API + enlace al informe público. Depende del bloque 0
+- [x] **Las dos cifras del hero, medidas (28 sep):** PageSpeed móvil **98** (mediana de 98 · 98 · 100; escritorio 100) y SEO **15/22** con 0 fallos — las otras 7 son de fichas de producto y colecciones, que el sitio no tiene. `scripts/medir-sitio.mjs` → `medicion/`, publicado y enlazado desde cada cifra. Para llegar a 0 avisos hubo que arreglar tres cosas que el propio motor encontró: meta description de 162 caracteres, sin `og:image` y sin schema `Organization`
 - [ ] **Publicación del informe en URL pública** — `gaboauditmyweb.dev/audit/<token>` con `noindex`. Hoy el motor genera un archivo, no un link: se pierde saber quién lo abrió y hasta dónde bajó, que es lo que te dice a quién llamar
 
 ### Lo que NO se construye todavía

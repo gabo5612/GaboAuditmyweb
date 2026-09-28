@@ -264,7 +264,6 @@ Dark only. `color-scheme: dark` is set and there is no light palette; do not add
 
 The page ships several deliberate empty states, each marked in the UI with an amber `▲` badge. These are not bugs and must not be filled with invented values:
 
-- PageSpeed gauge — awaits a real build-time fetch from the PageSpeed Insights API, published with a link to the public report.
 - The three stat cards, and the case-study before/after bars — awaiting figures verified against primary sources.
 - Case study slot 02 — needs client permission, both captures, and both dates.
 - Client logos column.
@@ -293,6 +292,26 @@ audit report, via `bin/report.js --cal` — after the prospect has the free
 audit and its giveaway quick win in hand. `report/template.js` renders nothing
 when the flag is absent, so the report is correct either way.
 
-Two placeholders are specific to the split: the hub's dual panel shows both
-`—` for PageSpeed and `—/22` for SEO checks, and each track has one empty case
-study slot.
+Each track has one empty case study slot.
+
+## The site's own figures
+
+The hero gauges (`98` PageSpeed mobile, `15/22` SEO on 2026-09-28) are real
+measurements of the deployed site, not placeholders. `node scripts/medir-sitio.mjs`
+runs PSI three times per strategy against `https://gaboauditmyweb.dev/` and the
+SEO checks through the same `audit-engine/src/seo.js` functions, skipping only
+the Shopify gate, and writes the raw output to `medicion/`; `build.js` publishes
+that folder so every figure links to its source.
+
+- **It measures the deployed site, so it runs after a deploy, never in the
+  build.** Then the figures are copied by hand into the three pages (EN markup +
+  ES keys `dual.*`, `gauge.*`, `se.gauge*`) and the site is redeployed. That
+  keeps the build deterministic.
+- **Median of three, range printed.** Mobile swings 98–100 between runs (Speed
+  Index 2.3–4.1 s under emulation, LCP stable at ~1.2 s). PSI serves a cached
+  response for a repeated URL within ~60 s; the script detects the repeated
+  `fetchTime` and does not count it.
+- **`15/22` is 0 failed, not 7 failed.** The other 7 test product/collection
+  pages this site does not have, and the copy says so next to the number.
+- Re-measure after any change that could move either figure, and update the
+  date in the badges.

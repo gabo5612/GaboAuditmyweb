@@ -31,7 +31,7 @@
   var ES = {
     /* ── Común a las tres páginas ─────────────────────── */
     'meta.title': 'Gabriel Arias · Rendimiento y SEO para Shopify',
-    'meta.description': 'Dos cosas le cuestan dinero a tu tienda Shopify sin que se note: lo que tarda en cargar y lo mal que Google la lee. Las dos se miden desde fuera. Auditoría gratis en 48 horas de la que elijas.',
+    'meta.description': 'Dos cosas le cuestan dinero a tu tienda Shopify: lo que tarda en cargar y lo mal que Google la lee. Las dos se miden desde fuera. Auditoría gratis en 48 h.',
     'meta.ogTitle': 'Gabriel Arias · Rendimiento y SEO para Shopify',
     'meta.ogDescription': 'Dos sprints de 30 días, se venden por separado, cada uno con su garantía por escrito. Auditoría gratis en 48 horas, sin llamada.',
 
@@ -57,8 +57,11 @@
     'dual.label': 'Esta web, medida con sus propias herramientas',
     'dual.speed': 'PageSpeed móvil',
     'dual.seo': 'Comprobaciones SEO superadas',
-    'dual.badge': '▲ A la espera de la primera medición',
-    'dual.note': 'Las dos cifras salen de pasar las auditorías a este dominio durante el build, y se publican con su salida en bruto. Hasta entonces no muestran nada.',
+    'dual.badge': '● Medido el 28 sep 2026',
+    'dual.note': 'PageSpeed: mediana de tres corridas móviles (98 · 98 · 100), Lighthouse 13.5.0. SEO: 0 fallos; las otras 7 miran fichas de producto y colecciones, que esta web no tiene.',
+    'self.raw': 'Salida en bruto',
+    'self.rawJson': 'JSON en bruto',
+    'self.rerun': 'Vuelve a medirlo tú',
 
     'week.1': 'Semana 1',
     'week.2': 'Semana 2',
@@ -66,9 +69,9 @@
     'week.4': 'Semana 4',
 
     'gauge.label': 'Esta web · PageSpeed móvil',
-    'gauge.alt': 'Todavía no hay una puntuación de PageSpeed verificada',
-    'gauge.badge': '▲ A la espera de la primera medición',
-    'gauge.note': 'Se obtiene de la API de PageSpeed Insights durante el build y se publica con enlace al informe público. Hasta que ese build no se ejecute, aquí no aparece nada.',
+    'gauge.alt': 'PageSpeed móvil: 98 de 100',
+    'gauge.badge': '● Medido el 28 sep 2026',
+    'gauge.note': 'Mediana de tres corridas móviles de PageSpeed Insights: 98 · 98 · 100. Escritorio 100 en las tres. Lighthouse 13.5.0.',
 
     'facts.aria': 'De un vistazo',
     'facts.turnaround': 'Plazo',
@@ -276,7 +279,7 @@
 
     /* ── Página de velocidad ──────────────────────────── */
     'sp.metaTitle': 'Sprint de velocidad · Gabriel Arias',
-    'sp.metaDescription': 'En 30 días subo el PageSpeed de tu Shopify por encima de 85 y tu conversión móvil entre un 10 y un 25%. Alcance cerrado, precio cerrado, medido antes y después. Auditoría gratis en 48 h.',
+    'sp.metaDescription': 'En 30 días llevo el PageSpeed de tu Shopify por encima de 85 y tu conversión móvil un 10–25% arriba. Alcance y precio cerrados. Auditoría gratis en 48 h.',
     'sp.ogTitle': 'Sprint de velocidad · Gabriel Arias',
     'sp.ogDescription': 'PageSpeed 85+ en 30 días, o devolución íntegra. Auditoría gratuita en 48 horas, sin llamada.',
     'sp.brandRole': 'Rendimiento Shopify',
@@ -325,7 +328,7 @@
 
     /* ── Página de SEO ────────────────────────────────── */
     'se.metaTitle': 'Sprint de SEO técnico · Gabriel Arias',
-    'se.metaDescription': 'Veintidós comprobaciones técnicas deciden si Google puede rastrear, indexar y leer tu tienda Shopify. La auditoría gratuita las pasa todas y te dice cuáles superas.',
+    'se.metaDescription': 'Veintidós comprobaciones técnicas deciden si Google puede rastrear, indexar y leer tu tienda Shopify. La auditoría gratis las corre todas y dice cuáles superas.',
     'se.ogTitle': 'Sprint de SEO técnico · Gabriel Arias',
     'se.ogDescription': 'Toda comprobación fallida en verde, o devolución íntegra. Nunca una promesa sobre posiciones. Auditoría gratis en 48 horas.',
     'se.brandRole': 'SEO técnico Shopify',
@@ -337,8 +340,8 @@
     'se.link': 'Ver las 22 comprobaciones ↓',
     'se.note': 'Sin keywords, sin backlinks, sin promesas de posiciones. Sólo técnico — la parte que se puede medir desde fuera.',
     'se.gaugeLabel': 'Esta web · comprobaciones superadas',
-    'se.gaugeBadge': '▲ A la espera del primer análisis',
-    'se.gaugeNote': 'La rellena pasar la auditoría a este dominio durante el build, y se publica con el JSON en bruto. Hasta entonces no muestra nada.',
+    'se.gaugeBadge': '● Medido el 28 sep 2026',
+    'se.gaugeNote': 'Las mismas 22 comprobaciones de la auditoría gratis, contra este dominio: 0 fallos, 0 avisos. Las otras 7 miran fichas de producto y colecciones, que esta web no tiene.',
     'se.checksRun': 'Comprobaciones',
     'se.checksNote': 'Siempre 22 — lo que no se puede medir se informa, nunca se descarta',
     'se.sprintNote': 'Cuatro semanas — la última es re-rastreo y prueba',

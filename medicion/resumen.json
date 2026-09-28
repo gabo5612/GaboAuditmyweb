@@ -1,0 +1,81 @@
+{
+  "url": "https://gaboauditmyweb.dev/",
+  "fuente": "PageSpeed Insights API v5 (Lighthouse)",
+  "psi": {
+    "mobile": {
+      "score_mediana": 98,
+      "scores": [
+        98,
+        98,
+        100
+      ],
+      "lcp_ms_mediana": 1235,
+      "fechas": [
+        "2026-09-28T14:47:22.979Z",
+        "2026-09-28T14:48:38.784Z",
+        "2026-09-28T14:49:55.071Z"
+      ],
+      "lighthouse": "13.5.0",
+      "archivos": [
+        "psi-mobile-1.json",
+        "psi-mobile-2.json",
+        "psi-mobile-3.json"
+      ]
+    },
+    "desktop": {
+      "score_mediana": 100,
+      "scores": [
+        100,
+        100,
+        100
+      ],
+      "lcp_ms_mediana": 343,
+      "fechas": [
+        "2026-09-28T14:50:05.811Z",
+        "2026-09-28T14:51:20.993Z",
+        "2026-09-28T14:52:35.696Z"
+      ],
+      "lighthouse": "13.5.0",
+      "archivos": [
+        "psi-desktop-1.json",
+        "psi-desktop-2.json",
+        "psi-desktop-3.json"
+      ]
+    }
+  },
+  "seo": {
+    "fecha": "2026-09-28T14:52:44.015Z",
+    "fuente": "audit-engine/src/seo.js",
+    "archivo": "seo.json",
+    "total": 22,
+    "evaluadas": 15,
+    "pasa": 15,
+    "falla": 0,
+    "aviso": 0,
+    "no_aplica": 2,
+    "no_medible": 5,
+    "por_grupo": {
+      "indexabilidad": {
+        "total": 6,
+        "falla": 0,
+        "aviso": 0
+      },
+      "duplicados": {
+        "total": 4,
+        "falla": 0,
+        "aviso": 0
+      },
+      "metadatos": {
+        "total": 5,
+        "falla": 0,
+        "aviso": 0
+      },
+      "enriquecidos": {
+        "total": 7,
+        "falla": 0,
+        "aviso": 0
+      }
+    },
+    "salud_pct": 100
+  }
+}
