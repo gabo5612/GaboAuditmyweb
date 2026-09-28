@@ -43,3 +43,31 @@ test('el teléfono va en el pie si está configurado, y no deja un separador col
   assert.match(pie('X', '+49 151 26044084'), /gaboauditmyweb\.dev · \+49 151 26044084/);
   assert.doesNotMatch(pie('X'), /· \n/);
 });
+
+/* bin/draft.js: el asunto no puede prometer peor de lo que se midió, y una
+   tienda rápida no recibe un correo de «tu tienda es lenta». */
+import { borradores } from '../bin/draft.js';
+
+const auditoria = (score, lcp) => ({
+  tienda: { host: 'www.tienda.com' },
+  rendimiento: { movil: { score, metricas: { lcp_s: lcp } } },
+});
+const opts = { informe: 'https://gaboauditmyweb.dev/audit/' + 'a'.repeat(32), para: 'hello@tienda.com' };
+
+test('borrador: el asunto redondea el LCP mediano hacia abajo y quita el www', () => {
+  const [uno, dos, tres] = borradores(auditoria(38, 9.87), opts);
+  assert.match(uno.texto, /asunto: tienda\.com takes 9s to show anything on mobile/);
+  assert.match(dos.texto, /asunto: Re: tienda\.com takes 9s/);
+  assert.match(tres.texto, /asunto: Closing the loop on tienda\.com/);
+  for (const b of [uno, dos, tres]) assert.match(b.texto, /aprobado: no/);
+});
+
+test('borrador: sin --loom queda el marcador, y send.js no enviará', () => {
+  assert.match(borradores(auditoria(38, 6.2), opts)[0].texto, /\{loom\}/);
+  assert.doesNotMatch(borradores(auditoria(38, 6.2), { ...opts, sinLoom: true })[0].texto, /loom/i);
+});
+
+test('borrador: una tienda con score > 75 o LCP < 3 s no recibe este correo', () => {
+  assert.throws(() => borradores(auditoria(82, 6), opts), /75/);
+  assert.throws(() => borradores(auditoria(60, 2.9), opts), /no duele/);
+});
