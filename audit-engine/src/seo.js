@@ -103,6 +103,14 @@ export function leerMetadatos(pagina) {
       renderizadas_por_js: imgs.length - conSrc.length,
     },
     json_ld: leerJsonLd(html),
+    /* Microdatos: Google los acepta igual que el JSON-LD, y muchos temas
+       antiguos sólo emiten eso. Sin leerlos, 4 de 14 «sin schema Product» del
+       lote del 28 sep 2026 eran tiendas que lo tienen. */
+    microdatos: {
+      producto: /itemtype=["']https?:\/\/schema\.org\/(Product|ProductGroup)["']/i.test(html),
+      precio: /itemprop=["']price["']/i.test(html),
+      disponibilidad: /itemprop=["']availability["']/i.test(html),
+    },
   };
 }
 
@@ -341,7 +349,19 @@ export async function comprobarRutaDuplicada(urlProducto, urlColeccion) {
   if (!urlProducto || !urlColeccion) {
     return { medible: false, motivo: 'no se localizaron a la vez una ficha de producto y una colección públicas' };
   }
-  const handle = urlProducto.split('/products/')[1]?.split(/[?#]/)[0];
+  /* El producto tiene que pertenecer a la colección. Con uno que no está en
+     ella, Shopify redirige o sirve otra cosa y el canonical apunta a la
+     home: wildnutrition y beekman1802 «fallaban» así el 28 sep 2026. Se
+     pide a la propia colección su primer producto; la muestra general queda
+     de reserva. */
+  let handle = null;
+  try {
+    // A mano: new URL('products.json', …/collections/x) sustituiría la «x».
+    const r = await texto200(`${urlColeccion.replace(/\/$/, '')}/products.json?limit=1`);
+    if (r.ok) handle = JSON.parse(r.cuerpo)?.products?.[0]?.handle || null;
+  } catch { /* sin products.json de colección: se usa la muestra */ }
+  if (handle) urlProducto = unirUrl(new URL(urlColeccion).origin, `/products/${handle}`);
+  handle ||= urlProducto.split('/products/')[1]?.split(/[?#]/)[0];
   if (!handle) return { medible: false, motivo: 'la URL de producto no tiene el formato /products/<handle>' };
 
   const duplicada = `${urlColeccion.replace(/\/$/, '')}/products/${handle}`;
@@ -655,22 +675,37 @@ function comprobarSchema(producto, coleccion, home) {
        y el que usan los temas modernos. Buscar sólo `Product` daría un
        "no tienes schema" sobre tiendas que lo tienen bien puesto. */
     const p = buscarTipo(producto.json_ld, 'Product') || buscarTipo(producto.json_ld, 'ProductGroup');
-    if (!p) {
-      out.push(nuevo('schema_product', 'Schema Product completo en la ficha', 'falla', {
-        valor: 'sin bloque Product ni ProductGroup en JSON-LD',
-        evidencia: producto.json_ld.tipos.length ? `tipos presentes: ${producto.json_ld.tipos.join(', ')}` : 'ningún JSON-LD en la página',
+    const micro = producto.microdatos || {};
+    if (!p && micro.producto) {
+      out.push(nuevo('schema_product', 'Schema Product completo en la ficha', micro.precio && micro.disponibilidad ? 'pasa' : 'aviso', {
+        valor: micro.precio && micro.disponibilidad
+          ? 'Product en microdatos, con price y availability'
+          : `Product en microdatos, sin ${[!micro.precio && 'price', !micro.disponibilidad && 'availability'].filter(Boolean).join(' ni ')}`,
+        url: producto.url, grupo: 'enriquecidos',
+      }));
+    } else if (!p) {
+      /* Aviso, no fallo: el motor no ejecuta JavaScript y Google sí. En el
+         lote del 28 sep, 4 de las 14 fichas «sin Product» lo tenían al
+         renderizar, inyectado por una app. Afirmar que falta sin haberlo
+         renderizado es el falso positivo que termina la venta. */
+      out.push(nuevo('schema_product', 'Schema Product completo en la ficha', 'aviso', {
+        valor: 'sin Product ni ProductGroup en el HTML inicial (ni JSON-LD ni microdatos)',
+        evidencia: `${producto.json_ld.tipos.length ? `tipos presentes: ${producto.json_ld.tipos.join(', ')}. ` : ''}Si una app lo inyecta con JavaScript, Google puede verlo: confirmarlo en el Rich Results Test antes de afirmar que falta`,
         url: producto.url, grupo: 'enriquecidos',
       }));
     } else {
-      // En un ProductGroup el precio vive en la variante, no en el padre.
+      /* En un ProductGroup el precio vive en las variantes. Campo a campo:
+         el grupo puede traer `offers` sin availability y las variantes, sí. */
       const variante = [].concat(p.hasVariant || [])[0] || {};
-      const oferta = [].concat(p.offers || variante.offers || [])[0] || {};
+      const ofertaP = [].concat(p.offers || [])[0] || {};
+      const ofertaV = [].concat(variante.offers || [])[0] || {};
+      const de = k => ofertaP[k] ?? ofertaV[k];
       const faltan = [
         ['name', p.name ?? variante.name],
         ['image', p.image ?? variante.image],
-        ['offers.price', oferta.price ?? oferta.lowPrice],
-        ['offers.priceCurrency', oferta.priceCurrency],
-        ['offers.availability', oferta.availability],
+        ['offers.price', de('price') ?? de('lowPrice')],
+        ['offers.priceCurrency', de('priceCurrency')],
+        ['offers.availability', de('availability')],
       ].filter(([, v]) => v == null || v === '').map(([k]) => k);
 
       out.push(faltan.length

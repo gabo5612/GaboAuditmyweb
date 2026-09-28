@@ -204,6 +204,9 @@ function primerEnlace(html, origin, prefijo, excluir = null) {
     // que alguien haya montado; /collections/x/products/y es un producto.
     if (excluir && excluir.test(new URL(abs).pathname)) continue;
     if (prefijo === '/collections/' && /\/products\//.test(abs)) continue;
+    // Una tarjeta regalo no tiene descripción ni schema de producto que
+    // juzgar: como muestra, sólo produce «falta meta description».
+    if (prefijo === '/products/' && /gift-?card/i.test(abs)) continue;
     return abs;
   }
   return null;

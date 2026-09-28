@@ -58,3 +58,53 @@ test('JSON-LD: vacío no cuenta, saltos crudos son tolerables y se leen, lo ileg
   assert.deepEqual(r.tipos, ['Product'], 'el Product del bloque tolerable se ve');
   assert.equal(r.bloques[0].description, 'KITCHEN\nDUTY');
 });
+
+import { comprobar, leerMetadatos } from '../src/seo.js';
+
+const checks = htmlProducto => comprobar({
+  origin: 'https://t.test/',
+  paginas: [
+    { rol: 'home', url: 'https://t.test/', html: '<title>T</title><h1>T</h1>' },
+    { rol: 'producto', url: 'https://t.test/products/a', html: htmlProducto },
+  ].map(p => ({ ...p, meta: leerMetadatos(p) })),
+  robots: { existe: false }, sitemap: { existe: false }, notFound: { correcto: true, status: 404 },
+  duplicada: { medible: false, motivo: 'x' }, llms: { existe: false }, xRobotsTag: null,
+}).find(c => c.id === 'schema_product');
+
+test('schema_product: los microdatos cuentan', () => {
+  const c = checks('<div itemscope itemtype="https://schema.org/Product"><span itemprop="price">9</span><link itemprop="availability" href="https://schema.org/InStock"></div>');
+  assert.equal(c.estado, 'pasa');
+});
+
+test('schema_product: sin nada en el HTML inicial es aviso, no fallo — Google ejecuta JS', () => {
+  const c = checks('<title>A</title><h1>A</h1>');
+  assert.equal(c.estado, 'aviso');
+  assert.match(c.evidencia, /Rich Results Test/);
+});
+
+test('schema_product: en un ProductGroup la disponibilidad puede vivir en la variante', () => {
+  const ld = { '@type': 'ProductGroup', name: 'x', image: 'i', offers: { price: 1, priceCurrency: 'GBP' },
+    hasVariant: [{ '@type': 'Product', offers: { availability: 'https://schema.org/InStock' } }] };
+  const c = checks(`<script type="application/ld+json">${JSON.stringify(ld)}</script>`);
+  assert.equal(c.estado, 'pasa');
+});
+
+import { comprobarRutaDuplicada } from '../src/seo.js';
+
+test('ruta duplicada: se construye con un producto que está en la colección', async () => {
+  activo = interceptarFetch([
+    ['/collections/sofas/products.json', respuesta({ products: [{ handle: 'linen-sofa' }] })],
+    ['/collections/sofas/products/linen-sofa', respuesta('<link rel="canonical" href="https://t.test/products/linen-sofa">', { url: 'https://t.test/collections/sofas/products/linen-sofa' })],
+  ]);
+  const r = await comprobarRutaDuplicada('https://t.test/products/otro-producto', 'https://t.test/collections/sofas');
+  assert.equal(r.url, 'https://t.test/collections/sofas/products/linen-sofa');
+  assert.equal(r.correcto, true);
+});
+
+test('la tarjeta regalo no se toma como muestra de producto', async () => {
+  activo = interceptarFetch(json);
+  const callar = silenciar();
+  const r = await descubrirPaginas('https://tienda.test', '<a href="/products/gift-card">Gift</a><a href="/products/mug">Mug</a>');
+  callar();
+  assert.equal(r.producto, 'https://tienda.test/products/mug');
+});
