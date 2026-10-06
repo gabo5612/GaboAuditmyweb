@@ -606,6 +606,7 @@ img,svg{max-width:100%}
   font-family:var(--font-mono);font-size:14px;
   color:var(--ink-muted);font-variant-numeric:tabular-nums;white-space:nowrap;
 }
+.groups__count--pass{color:var(--brand-hi)}
 
 /* ── Report anatomy ─────────────────────────────────────── */
 
@@ -883,6 +884,9 @@ img,svg{max-width:100%}
 }
 .checks__group .checks__row:last-child{border-bottom:0}
 .checks__state{font-family:var(--font-mono);font-size:14px;color:var(--ink-muted)}
+.checks__state--pass{color:var(--brand-hi)}
+.checks__state--fail{color:var(--status-bad)}
+.checks__state--warn{color:var(--status-warn)}
 .checks__id{font-family:var(--font-mono);font-size:14px;color:var(--ink-primary);word-break:break-word}
 .checks__what{font-size:14px;line-height:1.5;color:var(--ink-secondary)}
 

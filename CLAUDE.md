@@ -249,9 +249,17 @@ Four invariants that are load-bearing, not stylistic:
   fails, `collect.js` returns `estado: 'fallida'` and `report.js` refuses to
   render. Everything unmeasurable goes into `datos_faltantes`, which the
   report prints.
-- **Nothing reaches a prospect without human review.** No sending code exists
-  here, deliberately — that is phase 3, and the spec says not to build it
-  until this one has produced a booked call.
+- **No first contact without human review.** `bin/send.js` sends step 1 of
+  the outbound sequence only when its draft says `aprobado: si`, set after
+  Gabriel reviews the test copies in his inbox and approves in the chat.
+  The two follow-ups (day 4, day 10) are the exception, by his decision of
+  2026-10-06: `send.js --lote --solo-seguimientos` sends them unattended
+  from a daily launchd job (`launchd/`), skipping anyone listed in
+  `prospectos/respuestas.csv` or `bajas.csv` and anyone whose step 1
+  bounced or complained in Resend. Every send respects the warm-up cap.
+- **The prospect's language wins.** A store whose site (`<html lang>`, else
+  its ccTLD) is Spanish gets the report, all three emails and the footer in
+  Spanish; `bin/draft.js` and `analysis/prompt.md` apply the same rule.
 
 Detection has honest limits, recorded in the output as `alcance` fields:
 apps injected by a Tag Manager are invisible, `@font-face` is only read from
@@ -345,6 +353,11 @@ that folder so every figure links to its source.
   TBT and says so. The CrUX cell reports the API's 404 — the domain has too
   little Chrome traffic to be in the dataset — instead of a number; switch it
   to the real p75 once `records:queryRecord` returns one.
+- **The SEO tables are this site too.** The hub's track card (`6/6 · 4/4 · 5/5
+  · 7/7`) and the 22 rows on `seo.html` carry the states from
+  `medicion/seo.json`, labelled "this site, measured <date>". A bare `—` in a
+  row reads as the legend's "Unmeasurable", so never leave one as filler.
+  Re-run the script and copy the states over whenever the checks change.
 - **The filmstrip is a simulation and is labelled as one.** It used to claim
   "same store, 4.8 s → 1.9 s LCP", figures no measurement produced (the
   animation itself paints the hero at 3.4 s and 0.8 s). Real figures go there
