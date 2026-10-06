@@ -1,6 +1,6 @@
 {
   "url": "https://gaboauditmyweb.dev/",
-  "fecha": "2026-09-28T15:51:45.503Z",
+  "fecha": "2026-10-06T09:40:09.907Z",
   "plantillas": {
     "home": "https://gaboauditmyweb.dev/",
     "producto": [
@@ -18,7 +18,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "https://gaboauditmyweb.dev/robots.txt",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "indexabilidad"
     },
     {
@@ -29,7 +29,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "https://gaboauditmyweb.dev/robots.txt",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "indexabilidad"
     },
     {
@@ -40,7 +40,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "https://gaboauditmyweb.dev/robots.txt",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "indexabilidad"
     },
     {
@@ -51,7 +51,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "https://gaboauditmyweb.dev/sitemap.xml",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "indexabilidad"
     },
     {
@@ -62,7 +62,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "indexabilidad"
     },
     {
@@ -73,7 +73,7 @@
       "evidencia": null,
       "url": "https://gaboauditmyweb.dev/pagina-inexistente-auditoria-seo-0000",
       "fuente": "código de estado HTTP",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "indexabilidad"
     },
     {
@@ -84,7 +84,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "duplicados"
     },
     {
@@ -95,7 +95,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "duplicados"
     },
     {
@@ -106,7 +106,7 @@
       "evidencia": null,
       "url": "https://gaboauditmyweb.dev/index.html",
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "duplicados",
       "nota": "Este sitio no tiene /collections/*/products/*. Se mide la ruta duplicada que sí tiene: /index.html frente a /, con la misma regla."
     },
@@ -118,7 +118,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "duplicados"
     },
     {
@@ -129,7 +129,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "metadatos"
     },
     {
@@ -140,7 +140,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "metadatos"
     },
     {
@@ -151,7 +151,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "metadatos"
     },
     {
@@ -162,7 +162,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "metadatos"
     },
     {
@@ -173,7 +173,7 @@
       "evidencia": "2 más llevan alt vacío, que es lo correcto en una imagen decorativa",
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "metadatos"
     },
     {
@@ -184,7 +184,7 @@
       "evidencia": null,
       "url": "https://gaboauditmyweb.dev/speed.html",
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "enriquecidos",
       "nota": "La ficha es speed.html (Product con su Offer). seo.html se comprobó en una segunda pasada con el mismo resultado."
     },
@@ -196,7 +196,7 @@
       "evidencia": null,
       "url": "https://gaboauditmyweb.dev/speed.html",
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "enriquecidos",
       "nota": "Medido en speed.html; seo.html da el mismo resultado."
     },
@@ -208,7 +208,7 @@
       "evidencia": null,
       "url": "https://gaboauditmyweb.dev/",
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "enriquecidos"
     },
     {
@@ -219,7 +219,7 @@
       "evidencia": null,
       "url": "https://gaboauditmyweb.dev/",
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "enriquecidos",
       "nota": "La colección es la home: el hub que lista las dos ofertas, con ItemList."
     },
@@ -231,7 +231,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "enriquecidos"
     },
     {
@@ -242,7 +242,7 @@
       "evidencia": null,
       "url": null,
       "fuente": "HTML servido por la tienda",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "enriquecidos"
     },
     {
@@ -253,7 +253,7 @@
       "evidencia": null,
       "url": "https://gaboauditmyweb.dev/llms.txt",
       "fuente": "https://gaboauditmyweb.dev/llms.txt",
-      "fecha": "2026-09-28",
+      "fecha": "2026-10-06",
       "grupo": "enriquecidos"
     }
   ]

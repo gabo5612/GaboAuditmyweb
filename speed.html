@@ -92,13 +92,13 @@
 
     <div class="card gauge enter enter--3">
       <div class="mono-label gauge__label" data-i18n="gauge.label">This site · PageSpeed mobile</div>
-      <svg class="gauge__dial" width="200" height="200" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="PageSpeed mobile score: 100 out of 100">
+      <svg class="gauge__dial" width="200" height="200" viewBox="0 0 128 128" role="img" data-i18n-aria="gauge.alt" aria-label="PageSpeed mobile score: 98 out of 100">
         <circle cx="64" cy="64" r="54" fill="none" stroke="var(--hairline)" stroke-width="8"></circle>
-        <circle cx="64" cy="64" r="54" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round" stroke-dasharray="339.3 339.3" transform="rotate(-90 64 64)"></circle>
-        <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="48" font-weight="600" fill="#F2F4F5">100</text>
+        <circle cx="64" cy="64" r="54" fill="none" stroke="var(--brand)" stroke-width="8" stroke-linecap="round" stroke-dasharray="332.5 339.3" transform="rotate(-90 64 64)"></circle>
+        <text x="64" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="48" font-weight="600" fill="#F2F4F5">98</text>
       </svg>
-      <span class="badge badge--good badge--md" data-i18n="gauge.badge">● Measured 28 Sep 2026</span>
-      <p class="gauge__note"><span data-i18n="gauge.note">Median of three PageSpeed Insights mobile runs: 98 · 100 · 100. Desktop 100 on all three. Lighthouse 13.5.0.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a> · <a class="gauge__raw" href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fgaboauditmyweb.dev%2F" data-i18n="self.rerun">Re-run it yourself</a></p>
+      <span class="badge badge--good badge--md" data-i18n="gauge.badge">● Measured 6 Oct 2026</span>
+      <p class="gauge__note"><span data-i18n="gauge.note">Median of three PageSpeed Insights mobile runs: 98 · 99 · 98. Desktop 100 on all three. Lighthouse 13.5.0.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a> · <a class="gauge__raw" href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fgaboauditmyweb.dev%2F" data-i18n="self.rerun">Re-run it yourself</a></p>
     </div>
   </section>
 
@@ -129,8 +129,8 @@
   <!-- ── Filmstrip ────────────────────────────────────────────────────── -->
   <section class="section" id="work">
     <div class="section__eyebrow-row">
-      <div class="mono-label" data-i18n="film.eyebrow">Same store · same connection · before and after</div>
-      <div class="badge badge--warn badge--sm" data-i18n="film.badge">▲ Wireframe frames — swap for real captures</div>
+      <div class="mono-label" data-i18n="film.eyebrow">Simulated load · same store, before and after</div>
+      <div class="badge badge--warn badge--sm" data-i18n="film.badge">▲ Simulation — not a measured store</div>
     </div>
     <h2 class="h2 section__title" data-i18n="film.title">Three seconds in, one of them is still blank</h2>
     <p class="section__lede" data-i18n="film.lede">Drag the scrubber, or focus it and use ← →. This is what your customer sees while the page is still thinking.</p>
@@ -138,7 +138,7 @@
     <div class="film reveal">
       <div>
         <div class="film__head">
-          <span class="mono-label mono-label--bad" data-i18n="film.beforeLcp">■ Before · 4.8s LCP</span>
+          <span class="mono-label mono-label--bad" data-i18n="film.before">■ Before</span>
           <span class="film__time" data-time>3.0s</span>
         </div>
         <div class="frame frame--bad">
@@ -151,7 +151,7 @@
       </div>
       <div>
         <div class="film__head">
-          <span class="mono-label mono-label--good" data-i18n="film.afterLcp">● After · 1.9s LCP</span>
+          <span class="mono-label mono-label--good" data-i18n="film.after">● After</span>
           <span class="film__time" data-time>3.0s</span>
         </div>
         <div class="frame frame--good">
@@ -170,28 +170,30 @@
       <span class="film__readout" data-time>3.0s</span>
     </div>
 
+    <div class="mono-label vitals__head" data-i18n="sp.vitalsHead">This site, same metrics · mobile</div>
     <div class="vitals reveal">
       <div class="vital">
         <div class="mono-label" data-i18n="sp.lcpTarget">LCP · target ≤ 2.5 s</div>
-        <div class="vital__value">—</div>
-        <span class="badge badge--outline badge--sm" data-i18n="sp.awaiting">Awaiting run</span>
+        <div class="vital__value vital__value--measured">1.3 s</div>
+        <span class="badge badge--good badge--sm" data-i18n="sp.pass">● Pass</span>
       </div>
       <div class="vital">
-        <div class="mono-label" data-i18n="sp.inpTarget">INP · target ≤ 200 ms</div>
-        <div class="vital__value">—</div>
-        <span class="badge badge--outline badge--sm" data-i18n="sp.awaiting">Awaiting run</span>
+        <div class="mono-label" data-i18n="sp.tbtTarget">TBT · lab stand-in for INP · target ≤ 200 ms</div>
+        <div class="vital__value vital__value--measured">0 ms</div>
+        <span class="badge badge--good badge--sm" data-i18n="sp.pass">● Pass</span>
       </div>
       <div class="vital">
         <div class="mono-label" data-i18n="sp.clsTarget">CLS · target ≤ 0.1</div>
-        <div class="vital__value">—</div>
-        <span class="badge badge--outline badge--sm" data-i18n="sp.awaiting">Awaiting run</span>
+        <div class="vital__value vital__value--measured">0</div>
+        <span class="badge badge--good badge--sm" data-i18n="sp.pass">● Pass</span>
       </div>
       <div class="vital">
-        <div class="mono-label" data-i18n="sp.realUsers">Real users · 6 months</div>
-        <div class="vital__value">—</div>
-        <span class="badge badge--outline badge--sm" data-i18n="sp.cruxTrend">CrUX trend</span>
+        <div class="mono-label" data-i18n="sp.realUsers">Real users · CrUX</div>
+        <div class="vital__value" data-i18n="sp.noField">No data</div>
+        <span class="badge badge--outline badge--sm" data-i18n="sp.cruxEmpty">Too little traffic yet</span>
       </div>
     </div>
+    <p class="vitals__note"><span data-i18n="sp.vitalsNote">Median of the same three PageSpeed Insights mobile runs as the gauge, 6 Oct 2026. INP only exists in field data, so the lab reports Total Blocking Time in its place. The CrUX API returns no record for this domain: it has not had enough Chrome visitors to enter the dataset, and that is reported rather than filled in.</span> <a class="gauge__raw" href="medicion/resumen.json" data-i18n="self.raw">Raw output</a></p>
   </section>
 
   <!-- ── Numbers + calculator ─────────────────────────────────────────── -->

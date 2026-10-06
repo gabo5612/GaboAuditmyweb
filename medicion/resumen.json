@@ -3,17 +3,17 @@
   "fuente": "PageSpeed Insights API v5 (Lighthouse)",
   "psi": {
     "mobile": {
-      "score_mediana": 100,
+      "score_mediana": 98,
       "scores": [
         98,
-        100,
-        100
+        99,
+        98
       ],
-      "lcp_ms_mediana": 1383,
+      "lcp_ms_mediana": 1302,
       "fechas": [
-        "2026-09-28T15:46:16.407Z",
-        "2026-09-28T15:47:32.902Z",
-        "2026-09-28T15:48:47.733Z"
+        "2026-10-06T09:34:50.390Z",
+        "2026-10-06T09:36:06.664Z",
+        "2026-10-06T09:37:21.570Z"
       ],
       "lighthouse": "13.5.0",
       "archivos": [
@@ -29,11 +29,11 @@
         100,
         100
       ],
-      "lcp_ms_mediana": 365,
+      "lcp_ms_mediana": 386,
       "fechas": [
-        "2026-09-28T15:48:58.714Z",
-        "2026-09-28T15:50:15.699Z",
-        "2026-09-28T15:51:36.305Z"
+        "2026-10-06T09:37:31.643Z",
+        "2026-10-06T09:38:46.183Z",
+        "2026-10-06T09:40:01.090Z"
       ],
       "lighthouse": "13.5.0",
       "archivos": [
@@ -44,7 +44,7 @@
     }
   },
   "seo": {
-    "fecha": "2026-09-28T15:51:45.503Z",
+    "fecha": "2026-10-06T09:40:09.907Z",
     "fuente": "audit-engine/src/seo.js",
     "archivo": "seo.json",
     "total": 22,

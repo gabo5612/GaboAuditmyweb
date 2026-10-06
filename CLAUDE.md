@@ -309,7 +309,7 @@ when the flag is absent, so the report is correct either way.
 
 ## The site's own figures
 
-The hero gauges (`100` PageSpeed mobile, `22/22` SEO on 2026-09-28) are real
+The hero gauges (`98` PageSpeed mobile — runs 98 · 99 · 98 — and `22/22` SEO on 2026-10-06) are real
 measurements of the deployed site, not placeholders. `node scripts/medir-sitio.mjs`
 runs PSI three times per strategy against `https://gaboauditmyweb.dev/` and the
 SEO checks through the same `audit-engine/src/seo.js` functions, skipping only
@@ -340,3 +340,12 @@ that folder so every figure links to its source.
   Measure only once the live HTML is the version you mean to measure.
 - Re-measure after any change that could move either figure, and update the
   date in the badges.
+- **The vitals row on `speed.html` is this site too**, from the same three
+  mobile runs (median LCP, TBT, CLS). INP has no lab value, so the row shows
+  TBT and says so. The CrUX cell reports the API's 404 — the domain has too
+  little Chrome traffic to be in the dataset — instead of a number; switch it
+  to the real p75 once `records:queryRecord` returns one.
+- **The filmstrip is a simulation and is labelled as one.** It used to claim
+  "same store, 4.8 s → 1.9 s LCP", figures no measurement produced (the
+  animation itself paints the hero at 3.4 s and 0.8 s). Real figures go there
+  only with a paid sprint's before/after.
