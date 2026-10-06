@@ -94,10 +94,10 @@ La web no se puede publicar sin esto. No es código, es criterio.
 
 - [x] **Cal.com creado y enlazado** — `cal.com/gabriel-arias-dev/audit`. Enlace, no embed: el script de Cal.com sería un tercero en la web cuyo argumento es la velocidad. No hizo falta API key. Los CTA de auditoría siguen en `mailto:` a propósito — no son una reserva. El sitio principal de la llamada es el final del informe, vía `bin/report.js --cal`
 - [x] **Evento `/audit` de Cal.com: 20 minutos, confirmado (28 sep).** Coincide con los cinco sitios del copy que lo prometen
-- [ ] **Verificar contra fuente primaria** el coeficiente de 0,8 % por cada 100 ms y las tres tarjetas de estadística. Es la única cifra del sistema sin procedencia real, y vive en la calculadora de la home — en un sitio cuya regla 4 es "sin fuente, no hay número"
-- [ ] **Caso de estudio 01** — captura antes, captura después, fecha de cada una
+- [ ] **Verificar contra fuente primaria** el coeficiente de 0,8 % por cada 100 ms. (Las tres tarjetas de estadística se quitaron del sitio el 6 oct; vuelven sólo con cifra verificada.) Es la única cifra del sistema sin procedencia real, y vive en la calculadora de la home — en un sitio cuya regla 4 es "sin fuente, no hay número"
+- [ ] **Caso de estudio 01** — captura antes, captura después, fecha de cada una. Las secciones de casos se quitaron del sitio el 6 oct (eran huecos vacíos); se vuelve a crear la sección cuando exista el primero
 - [ ] **Caso de estudio 02** — necesita permiso del cliente. Mientras no exista: teardown de tienda pública etiquetado como tal (`Public store teardown — unaffiliated demo`)
-- [ ] **Columna de logos de clientes** — sustituir por tres MetricTile agregadas hasta que existan
+- [x] **Columna de logos de clientes** — quitada del sitio (6 oct). Vuelve cuando haya logos reales con permiso
 
 **Descuento de cliente fundador, pendiente de decidir:** −30 % a los dos primeros a
 cambio de caso de estudio publicable y testimonio, por escrito en el contrato. Compra

@@ -274,13 +274,14 @@ Four rules from the system that outrank visual preference:
 
 Dark only. `color-scheme: dark` is set and there is no light palette; do not add `prefers-color-scheme` branches.
 
-## Unpublished placeholders
+## Removed placeholders
 
-The page ships several deliberate empty states, each marked in the UI with an amber `▲` badge. These are not bugs and must not be filled with invented values:
-
-- The three stat cards, and the case-study before/after bars — awaiting figures verified against primary sources.
-- Case study slot 02 — needs client permission, both captures, and both dates.
-- Client logos column.
+On 2026-10-06 every unpublished placeholder came off the public pages: the
+client-logos column in the hub's facts strip, the three stat cards on
+`speed.html`, and the case-study sections on both the hub and `speed.html`
+(their markup, i18n keys and CSS are gone, not hidden). Bring a section back
+only with real content — a measured before/after with source, date and client
+permission. Never with an empty slot or an invented store.
 
 FAQ answers are published as written (2026-09-28). Payment terms: 50% at
 start, 50% on delivery, full refund if the guarantee is missed.
@@ -305,8 +306,6 @@ point of having none. The primary place the call is offered is the end of the
 audit report, via `bin/report.js --cal` — after the prospect has the free
 audit and its giveaway quick win in hand. `report/template.js` renders nothing
 when the flag is absent, so the report is correct either way.
-
-Each track has one empty case study slot.
 
 ## The site's own figures
 

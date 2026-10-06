@@ -88,8 +88,6 @@
     'facts.guarantees': 'Garantías',
     'facts.guaranteesValue': 'Dos, las dos por escrito',
     'facts.guaranteesNote': '85+ en velocidad · toda comprobación fallida en verde en SEO',
-    'facts.logos': 'Logos de clientes',
-    'facts.logosNote': 'Sustituyen a esta columna tras el primer sprint',
 
     /* ── Las dos vías (home) ──────────────────────────── */
     'tracks.eyebrow': 'Las dos vías',
@@ -133,20 +131,11 @@
     'numbers.eyebrow': 'El problema, en números',
     'numbers.title': 'Una página lenta es una partida de ingresos, no un ticket de informática',
 
-    'stats.conversion': 'Conversión por cada 100 ms',
-    'stats.conversionSourceA': 'Deloitte, ',
-    'stats.conversionSourceB': ' (2020), p. 15: +8,4% de transacciones en retail por cada 0,1 s más rápido. Correlación, no causalidad.',
-    'stats.bounce': 'Rebote según tiempo de carga',
-    'stats.bounceSource': 'Estudio móvil de Google/Akamai — verificar año y metodología antes de publicar.',
-    'stats.cwv': 'Tiendas Shopify que suspenden CWV',
-    'stats.cwvSource': 'Dataset de CrUX — saca tú mismo la cifra actual; no cites a un blog que cita a otro blog.',
-
     'calc.label': 'Lo que te está costando',
     'calc.revenue': 'Facturación mensual (USD)',
     'calc.lcp': 'LCP móvil actual (segundos)',
     'calc.lcpHint': 'Pasa PageSpeed Insights a tu tienda, pestaña móvil. El objetivo son 2,5s.',
     'calc.leakLabel': 'Fuga mensual estimada',
-    'calc.verify': '▲ Verificar contra la fuente primaria antes de publicar.',
     /* Plantillas que rellena assets/main.js. Mismos marcadores en los dos idiomas. */
     'calc.formula': '{revenue} × ({lcp}s − {target}s) × {loss}%/s = {leak}/mes',
     // Con el tope activo la ecuación tiene que incluirlo para que evalúe a la
@@ -205,27 +194,7 @@
     'plans.retainer3': 'Un experimento de CRO al mes',
     'plans.retainerCta': 'Pide la auditoría',
 
-    /* ── Casos, proceso, sobre mí ─────────────────────── */
-    'cases.eyebrow': 'Casos',
-    'cases.title': 'Contexto, intervención, resultado medido',
-    'cases.lede': 'Dos huecos, uno por vía, los dos a la espera de mediciones reales. Los análisis de tiendas públicas se etiquetan como tales — una demo sin relación comercial vale más que un cliente inventado.',
-    'cases.speedSlot': 'Velocidad · hueco 01 · vacío',
-    'cases.speedText': 'Reservado para el primer sprint de velocidad pagado. Publicarlo exige cuatro cosas: el permiso del cliente, la captura de antes, la captura de después y la fecha de cada una.',
-    'cases.seoSlot': 'SEO · hueco 01 · vacío',
-    'cases.seoText': 'Reservado para el primer sprint de SEO pagado. Los dos análisis, el primero y el re-rastreo, publicados uno al lado del otro con su fecha.',
-    'cases.link': 'Qué incluye el sprint →',
-    'cases.badge': 'Análisis de tienda pública — demo sin relación comercial',
-    'cases.slot1': 'Hueco 01 · texto de ejemplo',
-    'cases.context': 'Contexto',
-    'cases.contextText': 'Tienda de ropa sobre un tema muy personalizado, seis scripts de analítica en la ruta crítica, hero servido a 2400px.',
-    'cases.intervention': 'Intervención',
-    'cases.interventionText': 'Terceros aplazados hasta la interacción, pipeline responsive en AVIF, dos apps que duplicaban el mismo tracking eliminadas.',
-    'cases.result': 'Resultado',
-    'cases.resultText': 'Pendiente de medición.',
-    'cases.awaitFlag': '▲ A la espera de datos',
-    'cases.slot2': 'Hueco 02 · vacío',
-    'cases.slot2Text': 'Reservado para el primer sprint pagado. Publicarlo exige cuatro cosas: el permiso del cliente, la captura de antes, la captura de después y la fecha de cada una.',
-
+    /* ── Proceso, sobre mí ─────────────────────── */
     'process.eyebrow': 'Proceso',
     'process.title': 'Cómo funciona, en cualquiera de las dos vías',
     'process.t1': 'Auditoría gratis',
@@ -313,8 +282,6 @@
     'sp.w3': 'Tema y prueba',
     'sp.w3Text': 'Liquid y CSS en las plantillas que importan, y después la medición de cierre y el informe antes/después.',
     'sp.auditKind': 'Auditoría de velocidad',
-    'sp.casesLede': 'Dos huecos, los dos a la espera de mediciones reales. Los análisis de tiendas públicas se etiquetan como tales — una demo sin relación comercial vale más que un cliente inventado.',
-    'sp.awaitText': 'Sin barras hasta que exista un par antes/después medido, con fuente y fecha.',
     'sp.a2': 'Acceso de colaborador a un tema duplicado. El de producción no se toca hasta que apruebas el diff.',
     'sp.q3': '¿Cómo funciona exactamente la garantía?',
     'sp.a3': 'PageSpeed móvil 85+ en el conjunto de plantillas acordado, medido juntos el último día. Por debajo de eso, devolución íntegra y te quedas el trabajo.',
